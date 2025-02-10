@@ -24,9 +24,6 @@ router.post('/', createWorkout)
 //Delete a single workout
 router.delete('/:id', deleteWorkout)
 
-//Delete all single workout
-router.delete('/', deleteAllWorkouts)
-
 //get response for a single workout
 router.patch('/:id', updateWorkout)
 

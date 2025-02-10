@@ -71,8 +71,7 @@ const Home = () => {
               ))}
           </div>
         </div>
-
-        {/* Main Content Area */}
+        
         <div className="workout-content">
           <WorkoutForm />
           <h3>

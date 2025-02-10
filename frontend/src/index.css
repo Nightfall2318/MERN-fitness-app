@@ -16,7 +16,7 @@ body {
 
 header {
   background: #fff;
-  height: 15vh;
+  height: 10vh;
   position: fixed; /* Make the header fixed */
   top: 0; /* Stick to the top */
   width: 100%; /* Ensure it spans the full width */
