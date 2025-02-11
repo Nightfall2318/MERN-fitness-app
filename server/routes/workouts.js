@@ -6,7 +6,6 @@ const
     getWorkouts,
     getSingleWorkout,
     deleteWorkout,
-    deleteAllWorkouts,
     updateWorkout} = require('../controllers/workoutControllers')
 
 

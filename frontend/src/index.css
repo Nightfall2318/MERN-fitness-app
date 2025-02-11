@@ -121,6 +121,7 @@ header a {
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer;
+  margin: 20px;
 }
 
 }
@@ -263,4 +264,27 @@ select.error {
   .date-button {
     white-space: nowrap;
   }
+}
+
+.datepicker-wrapper {
+  width: 100%;
+}
+
+.datepicker-wrapper .react-datepicker__input-container input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }

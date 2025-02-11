@@ -24,6 +24,7 @@ MERN-fitness-app /
 - mongoDB for visual studio(visual studio extension)
 - [react.js] (https://react.dev/learn/installation)
 - [nodemon](npm install nodemon)
+- [date-picker](npm install react-datepicker)
 
 ## Setup
 
