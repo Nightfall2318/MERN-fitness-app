@@ -7,6 +7,7 @@ const WorkoutDetails = ({ workout }) => {
   const [title, setTitle] = useState(workout.title);
   const [weight, setWeight] = useState(workout.weight);
   const [reps, setReps] = useState(workout.reps);
+  const [sets, setSets] = useState(workout.sets);
   const [category, setCategory] = useState(workout.category);
   const [date, setDate] = useState(
     new Date(workout.createdAt).toISOString().split('T')[0]
@@ -17,6 +18,7 @@ const WorkoutDetails = ({ workout }) => {
       title, 
       weight, 
       reps, 
+      sets,
       category,
       createdAt: new Date(date).toISOString()
     };
@@ -81,6 +83,16 @@ const WorkoutDetails = ({ workout }) => {
           </div>
 
           <div className="form-group">
+            <label>Sets:</label>
+            <input 
+              type="number" 
+              value={sets} 
+              onChange={(e) => setSets(e.target.value)}
+              className="form-input"
+            />
+          </div>
+
+          <div className="form-group">
             <label>Category:</label>
             <select
               value={category}
@@ -116,6 +128,7 @@ const WorkoutDetails = ({ workout }) => {
           <h3>{workout.title}</h3>
           <p><strong>Weight(kg): </strong>{workout.weight}</p>
           <p><strong>Reps: </strong>{workout.reps}</p>
+          <p><strong>Sets: </strong>{workout.sets}</p>
           <p><strong>Category: </strong>{workout.category}</p>
           <p><strong>Date: </strong>{new Date(workout.createdAt).toLocaleDateString()}</p>
 

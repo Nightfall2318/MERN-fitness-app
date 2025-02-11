@@ -25,13 +25,14 @@ const getSingleWorkout = async (req, res) => {
 };
 
 const createWorkout = async (req, res) => {
-    const { title, reps, weight, category, createdAt } = req.body;
+    const { title, reps,sets, weight, category, createdAt } = req.body;
 
     let emptyFields = [];
 
     if (!title) emptyFields.push('title');
     if (!reps) emptyFields.push('reps');
     if (!weight) emptyFields.push('weight');
+    if (!sets) emptyFields.push('sets');
     if (!category) emptyFields.push('category');
 
     if (emptyFields.length > 0) {
@@ -41,7 +42,7 @@ const createWorkout = async (req, res) => {
         });
     }
 
-    if (reps <= 0 || weight <= 0) {
+    if (reps <= 0 || weight <= 0 || sets <=0 ) {
         return res.status(400).json({
             error: 'Error: reps and weight cannot equal 0 or less',
             emptyFields,
@@ -53,6 +54,7 @@ const createWorkout = async (req, res) => {
         const workoutData = { 
             title, 
             reps, 
+            sets,
             weight, 
             category
         };
