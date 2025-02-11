@@ -150,6 +150,7 @@ const Home = () => {
           )}
 
           <h3>
+             {/* Display date data */}
             Workouts for {new Date(selectedDate).toLocaleDateString('en-US', {
               weekday: 'long',
               month: 'long',
