@@ -14,20 +14,30 @@ app.use((req, res, next) => {
     next()
 })
 
-// API routes
-app.use('/api/workouts', workoutRoutes)
+// Health check that doesn't depend on DB
 app.get('/api/health', (req, res) => {
-    res.status(200).send('OK')
+    console.log('Health check hit')
+    res.status(200).json({ status: "OK", message: "Service is healthy" });
 })
+
+// API routes with DB check
+app.use('/api/workouts', async (req, res, next) => {
+    if (!process.env.MONGODB_URL && !process.env.MONG_URI) {
+        return res.status(503).json({ error: 'Database configuration pending' })
+    }
+    if (mongoose.connection.readyState !== 1) {
+        return res.status(503).json({ error: 'Database connection not ready' })
+    }
+    next()
+}, workoutRoutes)
 
 // Static file serving in production
 if (process.env.NODE_ENV === 'production') {
     const buildPath = path.join(__dirname, '../frontend/build');
-    console.log('Serving React from:', buildPath);  // Log to confirm the path
+    console.log('Serving React from:', buildPath);
 
     app.use(express.static(buildPath));
 
-    // Handle React routing, return all requests to React app
     app.get('*', (req, res) => {
         res.sendFile(path.join(buildPath, 'index.html'), (err) => {
             if (err) {
@@ -41,13 +51,20 @@ if (process.env.NODE_ENV === 'production') {
 // Port configuration
 const PORT = process.env.PORT || 4000
 
-// Database connection and server start
-mongoose.connect(process.env.MONGODB_URL || process.env.MONG_URI)
-    .then(() => {
-        app.listen(PORT, () => {
-            console.log(`Connected to database, currently listening on port ${PORT}`)
+// Start server immediately
+const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log('Server starting on port:', PORT)
+})
+
+// Try to connect to database if configured
+if (process.env.MONGODB_URL || process.env.MONG_URI) {
+    mongoose.connect(process.env.MONGODB_URL || process.env.MONG_URI)
+        .then(() => {
+            console.log('Connected to database')
         })
-    })
-    .catch((error) => {
-        console.log(error)
-    })
+        .catch((error) => {
+            console.log('Database connection error:', error)
+        })
+} else {
+    console.log('No database configuration found - waiting for environment variables')
+}

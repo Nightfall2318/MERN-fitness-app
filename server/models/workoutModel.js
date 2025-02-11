@@ -1,24 +1,29 @@
-const mongoose = require('mongoose')
+// workoutModel.js
+const mongoose = require('mongoose');
 
-const Scehma = mongoose.Schema
+const Schema = mongoose.Schema;
 
-const workoutSchema = new Scehma({
+const workoutSchema = new Schema({
     title: {
         type: String,
         required: true
     },
     reps: {
-        type:Number,
+        type: Number,
         required: true
-    }, 
+    },
     weight: {
         type: Number,
         required: true
     },
-    category: { 
-        type: String, 
-        required: true 
-    },  
-}, { timestamps:true})
+    category: {
+        type: String,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now  // This allows both automatic and manual date setting
+    }
+});
 
-module.exports = mongoose.model('Workout', workoutSchema)
+module.exports = mongoose.model('Workout', workoutSchema);
