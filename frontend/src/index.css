@@ -1,290 +1,371 @@
-/* google font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap');
+ /* google font */
+ @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap');
 
-/* layout */
-:root {
-  --primary: #1aac83;
-  --error: #e7195a;
-}
-
-body {
-  background: #f1f1f1;
-  margin: 0;
-  font-family: 'Poppins';
-  padding-top: 10vh; /* Adjust based on your header height */
-}
-
-header {
-  background: #fff;
-  height: 10vh;
-  position: fixed; /* Make the header fixed */
-  top: 0; /* Stick to the top */
-  width: 100%; /* Ensure it spans the full width */
-  z-index: 1000; /* Ensure the navbar stays on top of other content */
-}
-
-header .navBar-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-
-
-header a {
-  color: #333;
-  text-decoration: none;
-}
-
-.pages {
-  max-width: 1400px;
-  padding: 20px;
-  margin: 0 auto;
-}
-
-/* homepage */
-.home {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 10px;
-}
-
-.workout-details-container {
-  background: #fff;
-  border-radius: 4px;
-  margin: 20px;
-  padding: 20px;
-  position: relative;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
-}
-
-.button-container {
-  display: flex;
-  justify-content: flex-end; /* Align buttons to the right */
-  gap: 10px; /* Space between buttons */
-  margin-top: 10px; /* Add spacing above */
-}
-
-.workout-details-container  h3 {
-  margin: 0 0 10px 0;
-  font-size: 1.2em;
-  color: var(--primary);
-}
-
-.workout-details-container  p {
-  margin: 0;
-  font-size: 0.9em;
-  color: #555;
-}
-
-.workout-details-container span {
-  position: absolute;
-  top:20px;
-  right:20px;
-  cursor: pointer;
-  background-color: #f1f1f1;
-  padding: 6px;
-  border-radius: 50%;
-  color: #333;
-}
-
-.workout-details-container {
-
-.cancelBtn {
-  background: var(--error);
-  border: 0;
-  color: #fff;
-  padding: 10px;
-  font-family: "Poppins";
-  border-radius: 4px;
-  cursor: pointer;
-  margin: 20px;
-}
-
-.editBtn {
-  background: var(--primary);
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.saveBtn {
-  background: var(--primary);
-  border: 0;
-  color: #fff;
-  padding: 10px;
-  font-family: "Poppins";
-  border-radius: 4px;
-  cursor: pointer;
-  margin: 20px;
-}
-
-}
-
-label,input,select{
-  display:block
-}
-
-input,select {
-  padding: 10px;
-  margin-top: 10px;
-  margin-bottom: 20px;
-  width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-form button {
-  background: var(--primary);
-  border: 0;
-  color: #fff;
-  padding: 10px;
-  font-family: "Poppins";
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-div.error {
-  padding: 10px;
-  background-color: #ffefff;
-  border: 1px solid var(--error);
-  color: var(--error);
-  border-radius: 4px;
-  margin: 20px 0;
-}
-
-
-
-input.error {
-  border: 1px solid var(--error);
-}
-
-select.error {
-  border: 1px solid var(--error) !important;
-}
-
-.workout-page {
-  display: flex;
-  gap: 2rem;
-  padding: 1rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.date-nav {
-  width: 250px;
-  background: white;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.date-nav h2 {
-  margin-bottom: 1rem;
-  font-size: 1.25rem;
-  font-weight: bold;
-}
-
-.date-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.date-button {
-  width: 100%;
-  text-align: left;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  background: transparent;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.date-button:hover {
-  background-color: #f3f4f6;
-}
-
-.date-button.active {
-  background-color: #10b981;
-  color: white;
-}
-
-.workout-count {
-  margin-left: 0.5rem;
-  font-size: 0.875rem;
-}
-
-.workout-content {
-  flex: 1;
-}
-
-.selected-date-workouts {
-
-  overflow:scroll;
-  max-height: 70vh;
-  margin: 1rem 0;
-
-  h3 {
-    margin: 1rem 0;
-    font-size: 1.25rem;
-    font-weight: bold;
-  }
-
-}
-
-.workouts-grid {
-  display: grid;
-  gap: 1rem;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .workout-page {
-    flex-direction: column;
-  }
-
-  .date-nav {
-    width: 100%;
-  }
-
-  .date-list {
-    flex-direction: row;
-    overflow-x: auto;
-    padding-bottom: 0.5rem;
-  }
-
-  .date-button {
-    white-space: nowrap;
-  }
-}
-
-.datepicker-wrapper {
-  width: 100%;
-}
-
-.datepicker-wrapper .react-datepicker__input-container input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-input,
-.form-select {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
+ /* layout */
+ :root {
+   --primary: #1aac83;
+   --error: #e7195a;
+ }
+ 
+ body {
+   background: #f1f1f1;
+   margin: 0;
+   font-family: 'Poppins';
+   padding-top: 10vh; /* Adjust based on your header height */
+ }
+ 
+ header {
+   background: #fff;
+   height: 10vh;
+   position: fixed; 
+   top: 0;
+   width: 100%; 
+   z-index: 1000;
+ }
+ 
+ header .navBar-container {
+   max-width: 1400px;
+   margin: 0 auto;
+   padding: 10px 20px;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+ }
+ 
+ header a {
+   color: #333;
+   text-decoration: none;
+ }
+ 
+ .pages {
+   max-width: 1400px;
+   padding: 20px;
+   margin: 0 auto;
+ }
+ 
+ .workout-details-container {
+   background: #fff;
+   border-radius: 4px;
+   margin: 20px;
+   padding: 20px;
+   position: relative;
+   box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+ }
+ 
+ .button-container {
+   display: flex;
+   justify-content: flex-end;
+   gap: 10px;
+   margin-top: 10px;
+ }
+ 
+ .workout-details-container h3 {
+   margin: 0 0 10px 0;
+   font-size: 1.2em;
+   color: var(--primary);
+ }
+ 
+ .workout-details-container p {
+   margin: 0;
+   font-size: 0.9em;
+   color: #555;
+ }
+ 
+ .workout-details-container span {
+   position: absolute;
+   top: 20px;
+   right: 20px;
+   cursor: pointer;
+   background-color: #f1f1f1;
+   padding: 6px;
+   border-radius: 50%;
+   color: #333;
+ }
+ 
+ .workout-details-container .cancelBtn {
+   background: var(--error);
+   border: 0;
+   color: #fff;
+   padding: 10px;
+   font-family: "Poppins";
+   border-radius: 4px;
+   cursor: pointer;
+   margin: 20px;
+ }
+ 
+ .workout-details-container .editBtn {
+   background: var(--primary);
+   color: white;
+   padding: 8px 12px;
+   border: none;
+   cursor: pointer;
+   border-radius: 4px;
+ }
+ 
+ .workout-details-container .saveBtn {
+   background: var(--primary);
+   border: 0;
+   color: #fff;
+   padding: 10px;
+   font-family: "Poppins";
+   border-radius: 4px;
+   cursor: pointer;
+   margin: 20px;
+ }
+ 
+ label, input, select {
+   display: block;
+ }
+ 
+ input, select {
+   padding: 10px;
+   margin-top: 10px;
+   margin-bottom: 20px;
+   width: 100%;
+   border: 1px solid #ddd;
+   border-radius: 4px;
+   box-sizing: border-box;
+ }
+ 
+ form button {
+   background: var(--primary);
+   border: 0;
+   color: #fff;
+   padding: 10px;
+   font-family: "Poppins";
+   border-radius: 4px;
+   cursor: pointer;
+ }
+ 
+ div.error {
+   padding: 10px;
+   background-color: #ffefff;
+   border: 1px solid var(--error);
+   color: var(--error);
+   border-radius: 4px;
+   margin: 20px 0;
+ }
+ 
+ input.error {
+   border: 1px solid var(--error);
+ }
+ 
+ select.error {
+   border: 1px solid var(--error) !important;
+ }
+ 
+ .workout-page {
+   display: flex;
+   gap: 2rem;
+   padding: 1rem;
+   max-width: 1200px;
+   margin: 0 auto;
+ }
+ 
+ .date-nav {
+   width: 250px;
+   background: white;
+   padding: 1rem;
+   border-radius: 8px;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+ }
+ 
+ .date-nav h2 {
+   margin-bottom: 1rem;
+   font-size: 1.25rem;
+   font-weight: bold;
+ }
+ 
+ .date-list {
+   display: flex;
+   flex-direction: column;
+   gap: 0.5rem;
+ }
+ 
+ /* Date List Container - Mobile and Desktop */
+ .date-buttons-container {
+   display: flex;
+   flex-direction: column; 
+   gap: 10px;
+ }
+ 
+ /* Additional styling for buttons to match vertical layout */
+ .date-button {
+   display: block; 
+   width: 100%; 
+   padding: 10px; 
+   text-align: left; 
+   background-color: #f1f1f1; 
+   border: 1px solid #ccc; 
+   border-radius: 4px; 
+   transition: background-color 0.3s ease;
+ }
+ 
+ .date-button:hover {
+   background-color: #dcdcdc; /* Change background on hover */
+ }
+ 
+ .date-button.active {
+   background-color: #10b981; /* Active button color */
+   color: white; /* White text when active */
+ }
+ 
+ .workout-count {
+   margin-left: 0.5rem;
+   font-size: 0.875rem;
+ }
+ 
+ .workout-content {
+   flex: 1;
+ }
+ 
+ .selected-date-workouts {
+   overflow: scroll;
+   max-height: 70vh;
+   margin: 1rem 0;
+ }
+ 
+ .selected-date-workouts h3 {
+   margin: 1rem 0;
+   font-size: 1.25rem;
+   font-weight: bold;
+ }
+ 
+ .workouts-grid {
+   display: grid;
+   gap: 1rem;
+ }
+ 
+ /* Responsive Design */
+ @media (max-width: 768px) {
+   .workout-page {
+     flex-direction: column;
+   }
+ 
+   .date-nav {
+     width: 92%;
+   }
+ 
+   .date-list {
+     flex-direction: row;
+     overflow-x: auto;
+     padding-bottom: 0.5rem;
+   }
+ 
+   .date-button {
+     white-space: nowrap;
+   }
+ }
+ 
+ .datepicker-wrapper {
+   width: 100%;
+ }
+ 
+ .datepicker-wrapper .react-datepicker__input-container input {
+   width: 100%;
+   padding: 8px;
+   border: 1px solid #ddd;
+   border-radius: 4px;
+ }
+ 
+ .form-group {
+   margin-bottom: 1rem;
+ }
+ 
+ .form-input,
+ .form-select {
+   width: 100%;
+   padding: 8px;
+   border: 1px solid #ddd;
+   border-radius: 4px;
+ }
+ 
+ /* Workout Form Inline (Hidden on Mobile) */
+ .workout-form-web {
+   display: block;
+ }
+ 
+ /* Modal Add Workout Button (Hidden on Web) */
+ .open-modal-btn {
+   display: none;
+   background: var(--primary);
+   color: white;
+   padding: 10px;
+   border: none;
+   cursor: pointer;
+   border-radius: 4px;
+   font-size: 1rem;
+   width: 100%;
+ }
+ 
+ /* Modal Styling (For Mobile Only) */
+ .modal-overlay {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: rgba(0, 0, 0, 0.5);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   z-index: 1000;
+ }
+ 
+ .modal-content {
+   background: white;
+   padding: 20px;
+   border-radius: 8px;
+   width: 90%;
+   max-width: 400px;
+   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+   position: relative;
+ }
+ 
+ .close-modal-btn {
+   position: absolute;
+   top: 10px;
+   right: 10px;
+   border: none;
+   background: var(--error);
+   color: white;
+   padding: 6px 10px;
+   font-size: 16px;
+   cursor: pointer;
+   border-radius: 4px;
+ }
+ 
+ /* Hide Inline Workout Form on Mobile */
+ @media (max-width: 768px) {
+   .workout-form-web {
+     display: none;
+   }
+ 
+   .open-modal-btn {
+     display: block;
+     margin-bottom: 1rem;
+   }
+ }
+ 
+ /* Hide the date buttons on mobile view */
+ @media (max-width: 768px) {
+   .date-buttons-container {
+     display: none;  /* Hide the date buttons */
+   }
+ }
+ 
+ 
+ .modal-content .date-buttons-container {
+   display: flex !important; 
+   flex-direction: column;
+   max-height: 60vh; 
+   overflow-y: auto;
+   padding-right: 10px; 
+ }
+ 
+ /* Show the date buttons on larger screens */
+ @media (min-width: 769px) {
+   .date-buttons-container {
+     display: block;
+   }
+ } 
