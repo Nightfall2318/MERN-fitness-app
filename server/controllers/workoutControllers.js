@@ -42,7 +42,7 @@ const createWorkout = async (req, res) => {
         });
     }
 
-    if (reps <= 0 || weight <= 0 || sets <=0 ) {
+    if (reps <= 0 || sets <=0 ) {
         return res.status(400).json({
             error: 'Error: reps and weight cannot equal 0 or less',
             emptyFields,
