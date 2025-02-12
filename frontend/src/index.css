@@ -258,17 +258,6 @@
    }
  }
  
- .datepicker-wrapper {
-   width: 100%;
- }
- 
- .datepicker-wrapper .react-datepicker__input-container input {
-   width: 100%;
-   padding: 8px;
-   border: 1px solid #ddd;
-   border-radius: 4px;
- }
- 
  .form-group {
    margin-bottom: 1rem;
  }
@@ -370,3 +359,158 @@
      display: block;
    }
  } 
+
+.workout-indicator {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--primary);
+}
+
+.modal-content h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+}
+
+.close-modal-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+}
+
+/* Mobile/Desktop visibility classes */
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: block;
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+  .mobile-only {
+    display: block;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+}
+
+/* Calendar Styles */
+.calendar-picker {
+  width: 100%;
+  padding: 1rem;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.calendar-nav-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 8px;
+  color: #333;
+  font-size: 1.2rem;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.calendar-nav-btn:hover {
+  background-color: #f1f1f1;
+}
+
+.calendar-month-title {
+  margin: 0;
+  font-family: 'Poppins';
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #666;
+  padding: 8px 0;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 0.875rem;
+  font-family: 'Poppins';
+  background-color: transparent;
+  color: #999;
+  transition: all 0.2s ease;
+}
+
+.calendar-day.has-workouts {
+  background-color: #f1f1f1;
+  color: #333;
+  cursor: pointer;
+}
+
+.calendar-day.has-workouts:hover {
+  background-color: #e0e0e0;
+}
+
+.calendar-day.selected {
+  background-color: var(--primary);
+  color: white;
+}
+
+.workout-indicator {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--primary);
+}
+
+.calendar-day.selected .workout-indicator {
+  background-color: white;
+}
