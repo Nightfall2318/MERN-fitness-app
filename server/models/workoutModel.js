@@ -1,11 +1,10 @@
-// workoutModel.js
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const workoutSchema = new Schema({
-    title: {
-        type: String,
+const setSchema = new Schema({
+    setNumber: {
+        type: Number,
         required: true
     },
     reps: {
@@ -15,14 +14,31 @@ const workoutSchema = new Schema({
     weight: {
         type: Number,
         required: true
+    }
+});
+
+const workoutSchema = new Schema({
+    title: {
+        type: String,
+        required: true
     },
     category: {
         type: String,
         required: true
     },
+    sets: {
+        type: [setSchema],
+        required: true,
+        validate: {
+            validator: function(v) {
+                return v.length > 0;
+            },
+            message: 'At least one set is required'
+        }
+    },
     createdAt: {
         type: Date,
-        default: Date.now  // This allows both automatic and manual date setting
+        default: Date.now
     }
 });
 

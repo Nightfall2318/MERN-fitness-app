@@ -5,20 +5,46 @@ const WorkoutDetails = ({ workout }) => {
   const { dispatch } = useWorkoutConext();
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(workout.title);
-  const [weight, setWeight] = useState(workout.weight);
-  const [reps, setReps] = useState(workout.reps);
   const [category, setCategory] = useState(workout.category);
-  const [date, setDate] = useState(
-    new Date(workout.createdAt).toISOString().split('T')[0]
-  );
+  
+  // Ensure sets is always an array, even if the data is incorrect
+  const [sets, setSets] = useState(() => {
+    // If sets is not an array, create a default set from old data
+    if (!Array.isArray(workout.sets)) {
+      return [{
+        setNumber: 1, 
+        reps: workout.reps || '', 
+        weight: workout.weight || ''
+      }];
+    }
+    return workout.sets;
+  });
+
+  const handleAddSet = () => {
+    setSets([
+      ...sets, 
+      { setNumber: sets.length + 1, reps: '', weight: '' }
+    ]);
+  };
+
+  const updateSet = (index, field, value) => {
+    const newSets = [...sets];
+    newSets[index][field] = value;
+    setSets(newSets);
+  };
+
+  const removeSet = (index) => {
+    const newSets = sets.filter((_, i) => i !== index);
+    // Renumber the sets
+    setSets(newSets.map((set, i) => ({...set, setNumber: i + 1})));
+  };
 
   const handleEdit = async () => {
     const updatedWorkout = { 
       title, 
-      weight, 
-      reps, 
-      category,
-      createdAt: new Date(date).toISOString()
+      category, 
+      sets,
+      createdAt: workout.createdAt  // Preserve original creation date
     };
 
     const response = await fetch(`/api/workouts/${workout._id}`, {
@@ -46,6 +72,27 @@ const WorkoutDetails = ({ workout }) => {
     }
   };
 
+  // Safe mapping function
+  const renderSets = (setsToRender) => {
+    // Ensure setsToRender is an array
+    const safeSets = Array.isArray(setsToRender) ? setsToRender : [];
+    
+    // If no sets, create a default set from old data
+    if (safeSets.length === 0 && (workout.reps || workout.weight)) {
+      return (
+        <div className="set-summary">
+          <p>Set 1: {workout.reps} reps at {workout.weight} kg</p>
+        </div>
+      );
+    }
+
+    return safeSets.map((set, index) => (
+      <div key={index} className="set-summary">
+        <p>Set {set.setNumber}: {set.reps} reps at {set.weight} kg</p>
+      </div>
+    ));
+  };
+
   return (
     <div className="workout-details-container">
       {isEditing ? (
@@ -56,26 +103,6 @@ const WorkoutDetails = ({ workout }) => {
               type="text" 
               value={title} 
               onChange={(e) => setTitle(e.target.value)}
-              className="form-input"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Weight (kg):</label>
-            <input 
-              type="number" 
-              value={weight} 
-              onChange={(e) => setWeight(e.target.value)}
-              className="form-input"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Reps:</label>
-            <input 
-              type="number" 
-              value={reps} 
-              onChange={(e) => setReps(e.target.value)}
               className="form-input"
             />
           </div>
@@ -96,14 +123,41 @@ const WorkoutDetails = ({ workout }) => {
             </select>
           </div>
 
-          <div className="form-group">
-            <label>Date:</label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="form-input"
-            />
+          <div className="sets-container">
+            <h4>Sets</h4>
+            {sets.map((set, index) => (
+              <div key={index} className="set-input-group">
+                <span>Set {set.setNumber}</span>
+                <input
+                  type="number"
+                  placeholder="Reps"
+                  value={set.reps}
+                  onChange={(e) => updateSet(index, 'reps', e.target.value)}
+                />
+                <input
+                  type="number"
+                  placeholder="Weight (kg)"
+                  value={set.weight}
+                  onChange={(e) => updateSet(index, 'weight', e.target.value)}
+                />
+                {sets.length > 1 && (
+                  <button 
+                    type="button" 
+                    onClick={() => removeSet(index)}
+                    className="remove-set-btn"
+                  >
+                    Remove Set
+                  </button>
+                )}
+              </div>
+            ))}
+            <button 
+              type="button" 
+              onClick={handleAddSet}
+              className="add-set-btn"
+            >
+              Add Another Set
+            </button>
           </div>
 
           <div className="button-container">
@@ -114,9 +168,10 @@ const WorkoutDetails = ({ workout }) => {
       ) : (
         <>
           <h3>{workout.title}</h3>
-          <p><strong>Weight(kg): </strong>{workout.weight}</p>
-          <p><strong>Reps: </strong>{workout.reps}</p>
           <p><strong>Category: </strong>{workout.category}</p>
+          <div className="sets-summary">
+            {renderSets(workout.sets)}
+          </div>
           <p><strong>Date: </strong>{new Date(workout.createdAt).toLocaleDateString()}</p>
 
           <div className="button-container">
