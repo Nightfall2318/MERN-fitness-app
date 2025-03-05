@@ -22,6 +22,24 @@ const WorkoutForm = () => {
         setSets(newSets);
     };
 
+    const incrementValue = (index, field, increment) => {
+        const newSets = [...sets];
+        const currentValue = newSets[index][field];
+        
+        if (field === 'reps') {
+            // Increment reps by 1, min 0
+            const newValue = Number(currentValue || 0) + increment;
+            newSets[index][field] = Math.max(0, newValue).toString();
+        } else if (field === 'weight') {
+            // Increment weight by 2.5, min 0
+            const currentNum = Number(currentValue || 0);
+            const newValue = Number((currentNum + increment * 2.5).toFixed(1));
+            newSets[index][field] = Math.max(0, newValue).toString();
+        }
+        
+        setSets(newSets);
+    };
+
     const removeSet = (index) => {
         const newSets = sets.filter((_, i) => i !== index)
             .map((set, i) => ({...set, setNumber: i + 1}));
@@ -106,23 +124,61 @@ const WorkoutForm = () => {
                 {sets.map((set, index) => (
                     <div key={index} className="set-input-group">
                         <span>Set {set.setNumber}</span>
-                        <input
-                            type="number"
-                            placeholder="Reps"
-                            value={set.reps}
-                            onChange={(e) => updateSet(index, 'reps', e.target.value)}
-                            required
-                            min="1"
-                        />
-                        <input
-                            type="number"
-                            placeholder="Weight (kg)"
-                            value={set.weight}
-                            onChange={(e) => updateSet(index, 'weight', e.target.value)}
-                            required
-                            min="0"
-                            step="0.1"
-                        />
+                        
+               
+                        <div className="input-with-buttons">                           
+                            <button 
+                                type="button"
+                                onClick={() => incrementValue(index, 'weight', -1)}
+                                className="increment-btn"
+                            >
+                                -
+                            </button>
+                            <input
+                                type="number"
+                                placeholder="Weight(kg)"
+                                value={set.weight}
+                                onChange={(e) => updateSet(index, 'weight', e.target.value)}
+                                className="set-input"
+                                required
+                                min="0"
+                                step="0.1"
+                            />
+                            <button 
+                                type="button"
+                                onClick={() => incrementValue(index, 'weight', 1)}
+                                className="increment-btn"
+                            >
+                                +
+                            </button>
+                        </div>
+
+                        <div className="input-with-buttons">
+                            <button 
+                                type="button"
+                                onClick={() => incrementValue(index, 'reps', -1)}
+                                className="increment-btn"
+                            >
+                                -
+                            </button>
+                            <input
+                                type="number"
+                                placeholder="Reps"
+                                value={set.reps}
+                                onChange={(e) => updateSet(index, 'reps', e.target.value)}
+                                className="set-input"
+                                required
+                                min="0"
+                            />
+                            <button 
+                                type="button"
+                                onClick={() => incrementValue(index, 'reps', 1)}
+                                className="increment-btn"
+                            >
+                                +
+                            </button>
+                        </div>
+
                         {sets.length > 1 && (
                             <button 
                                 type="button" 
@@ -132,19 +188,27 @@ const WorkoutForm = () => {
                                 Remove Set
                             </button>
                         )}
-                    </div>
-                ))}
+               
                 <button 
                     type="button" 
                     onClick={handleAddSet}
-                    className="add-set-btn"
+                    className="add-set-btn-main"
                 >
                     Add Another Set
+                </button>    
+                <button 
+                    type="submit"
+                    >
+                     Save Exercise
                 </button>
+                   {error && <div className="error">{error}</div>}              
+               </div>
+                ))}
+                
+              
             </div>
 
-            <button type="submit">Save Exercise</button>
-            {error && <div className="error-container">{error}</div>}
+            
         </form>
     )
 }

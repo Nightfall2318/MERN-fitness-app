@@ -127,7 +127,7 @@ const WorkoutDetails = ({ workout }) => {
             <h4>Sets</h4>
             {sets.map((set, index) => (
               <div key={index} className="set-input-group">
-                <span>Set {set.setNumber}</span>
+              
                 <input
                   type="number"
                   placeholder="Reps"
@@ -160,7 +160,7 @@ const WorkoutDetails = ({ workout }) => {
             </button>
           </div>
 
-          <div className="button-container">
+          <div className="form-action-buttons">
             <button className="saveBtn" onClick={handleEdit}>Save</button>
             <button className="cancelBtn" onClick={() => setIsEditing(false)}>Cancel</button>
           </div>

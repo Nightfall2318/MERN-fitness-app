@@ -58,6 +58,33 @@
    gap: 10px;
    margin-top: 10px;
  }
+
+ .form-action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.form-action-buttons .saveBtn,
+.form-action-buttons .cancelBtn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+}
+
+.form-action-buttons .saveBtn {
+  background-color: var(--primary);
+  color: white;
+}
+
+.form-action-buttons .cancelBtn {
+  background-color: var(--error);
+  color: white;
+}
  
  .workout-details-container h3 {
    margin: 0 0 10px 0;
@@ -362,4 +389,124 @@
 
  .add-set-btn {
   margin-bottom: 10px;
+  background: var(--primary);
+  border: 0;
+  color: #fff;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
  }
+ 
+ .add-set-btn-main {
+  margin-bottom: 10px;
+  margin-right: 20px;
+  background: var(--primary);
+  border: 0;
+  color: #fff;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+ }
+
+ .remove-set-btn {
+  background: var(--error);
+  margin-bottom: 10px;
+  border: 0;
+  color: #fff;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+ }
+
+ .input-with-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.input-with-buttons label {
+    margin-right: 5px;
+    white-space: nowrap;
+}
+
+.set-input-group {
+    display: block;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.input-with-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.input-with-buttons label {
+  margin-right: 5px;
+  white-space: nowrap;
+}
+
+.increment-btn {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--primary);
+  background-color: white;
+  color: var(--primary);
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.increment-btn:hover {
+  background-color: var(--primary);
+  color: white;
+  transform: scale(1.1);
+}
+
+.increment-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.set-input-group {
+  width: 100%;
+  display: block;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+
+  span {
+    font-weight: bold;
+  }
+}
+
+.set-input {
+  flex-grow: 1;
+  width: 70px;
+  text-align: center;
+  margin: 0 10px;
+}
+
