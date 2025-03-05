@@ -1,13 +1,16 @@
 import { useState } from "react"
 import { useWorkoutConext } from "../hooks/useWorkoutsContext";
+import { WORKOUT_EXERCISES, addExerciseToCategory } from "../utils/workExercises";
 
 const WorkoutForm = () => {
-    const { dispatch } = useWorkoutConext()
-    const [title, setTitle] = useState('');
-    const [category, setCategory] = useState('');
-    const [sets, setSets] = useState([{ setNumber: 1, reps: '', weight: '' }]);
-    const [error, setError] = useState(null);
-    const [emptyFields, setEmptyFields] = useState([])
+   const { dispatch } = useWorkoutConext()
+   const [title, setTitle] = useState('');
+   const [category, setCategory] = useState('');
+   const [sets, setSets] = useState([{ setNumber: 1, reps: '', weight: '' }]);
+   const [error, setError] = useState(null);
+   const [emptyFields, setEmptyFields] = useState([])
+   const [isCustomExercise, setIsCustomExercise] = useState(false);
+   const [newExercise, setNewExercise] = useState('');
 
     const handleAddSet = () => {
         setSets([
@@ -44,6 +47,32 @@ const WorkoutForm = () => {
         const newSets = sets.filter((_, i) => i !== index)
             .map((set, i) => ({...set, setNumber: i + 1}));
         setSets(newSets);
+    };
+
+   const handleCategoryChange = (selectedCategory) => {
+        setCategory(selectedCategory);
+        // Reset title when category changes
+        setTitle('');
+        // Reset custom exercise toggle
+        setIsCustomExercise(false);
+        // Reset new exercise input
+        setNewExercise('');
+    };
+
+    const handleAddNewExercise = () => {
+        if (newExercise.trim() && category) {
+            // Add the new exercise to the category
+            addExerciseToCategory(category, newExercise.trim());
+            
+            // Set the newly added exercise as the selected title
+            setTitle(newExercise.trim());
+            
+            // Reset the new exercise input
+            setNewExercise('');
+            
+            // Exit custom exercise mode
+            setIsCustomExercise(false);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -94,18 +123,9 @@ const WorkoutForm = () => {
         <form className="create-workout-container" onSubmit={handleSubmit}>
             <h3>Add a new Workout</h3>
 
-            <label>Exercise Title:</label>
-            <input
-                type="text"
-                onChange={(e) => setTitle(e.target.value)}   
-                value={title}    
-                className={emptyFields.includes('title') ? 'error' : ''}
-                required
-            />
-
             <label>Category:</label>
             <select
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={(e) => handleCategoryChange(e.target.value)}
                 value={category}
                 className={emptyFields.includes("category") ? "error" : ""}
                 required
@@ -119,13 +139,70 @@ const WorkoutForm = () => {
                 <option value="Core">Core</option>
             </select>
 
+            {category && (
+                <div className="exercise-selection">
+                    <label>Exercise:</label>
+                    {!isCustomExercise ? (
+                        <select
+                            value={title}
+                            onChange={(e) => {
+                                if (e.target.value === 'custom') {
+                                    setIsCustomExercise(true);
+                                    setTitle('');
+                                } else {
+                                    setTitle(e.target.value);
+                                }
+                            }}
+                            required
+                        >
+                            <option value="">Select Exercise</option>
+                            <option value="custom">Add Custom Exercise</option>
+                            {WORKOUT_EXERCISES[category].map((exercise) => (
+                                <option key={exercise} value={exercise}>
+                                    {exercise}
+                                </option>
+                            ))}
+                        </select>
+                    ) : (
+                        <div className="custom-exercise-input">
+                            <input
+                                type="text"
+                                placeholder="Enter custom exercise"
+                                value={newExercise}
+                                onChange={(e) => setNewExercise(e.target.value)}
+                                required
+                            />
+                            <div className="custom-exercise-actions">
+                                <button 
+                                    type="button" 
+                                    onClick={handleAddNewExercise}
+                                    className="add-custom-exercise-btn"
+                                    disabled={!newExercise.trim()}
+                                >
+                                    Add Exercise
+                                </button>
+                                <button 
+                                    type="button" 
+                                    onClick={() => {
+                                        setIsCustomExercise(false);
+                                        setNewExercise('');
+                                    }}
+                                    className="cancel-custom-exercise-btn"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
+
             <div className="sets-container">
                 <h4>Sets</h4>
                 {sets.map((set, index) => (
                     <div key={index} className="set-input-group">
                         <span>Set {set.setNumber}</span>
                         
-               
                         <div className="input-with-buttons">                           
                             <button 
                                 type="button"
@@ -188,7 +265,9 @@ const WorkoutForm = () => {
                                 Remove Set
                             </button>
                         )}
-               
+                    </div>
+                ))}
+                
                 <button 
                     type="button" 
                     onClick={handleAddSet}
@@ -198,17 +277,11 @@ const WorkoutForm = () => {
                 </button>    
                 <button 
                     type="submit"
-                    >
-                     Save Exercise
+                >
+                    Save Exercise
                 </button>
-                   {error && <div className="error">{error}</div>}              
-               </div>
-                ))}
-                
-              
+                {error && <div className="error">{error}</div>}
             </div>
-
-            
         </form>
     )
 }

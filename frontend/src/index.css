@@ -510,3 +510,31 @@
   margin: 0 10px;
 }
 
+.custom-exercise-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px; 
+}
+
+.add-custom-exercise-btn,
+.cancel-custom-exercise-btn {
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.add-custom-exercise-btn {
+  background-color: #10b981;
+  color: white;
+  border: none;
+}
+
+.cancel-custom-exercise-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+}
+
+.add-custom-exercise-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
