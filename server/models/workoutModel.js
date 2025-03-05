@@ -22,6 +22,10 @@ const workoutSchema = new Schema({
         type: String,
         required: true
     },
+    sets: {
+        type:Number,
+        required: true
+    }, 
     category: {
         type: String,
         required: true
