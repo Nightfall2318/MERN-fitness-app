@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useWorkoutConext } from "../hooks/useWorkoutsContext";
+import { getWorkoutExercises } from "../utils/exerciseService";
 
 const WorkoutDetails = ({ workout }) => {
   const { dispatch } = useWorkoutConext();
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(workout.title);
   const [category, setCategory] = useState(workout.category);
+  const [exercises, setExercises] = useState({});
+  const [loading, setLoading] = useState(false);
   
   // Ensure sets is always an array, even if the data is incorrect
   const [sets, setSets] = useState(() => {
@@ -19,6 +22,25 @@ const WorkoutDetails = ({ workout }) => {
     }
     return workout.sets;
   });
+
+  // Fetch exercises when editing begins
+  useEffect(() => {
+    if (isEditing) {
+      const fetchExercises = async () => {
+        setLoading(true);
+        try {
+          const data = await getWorkoutExercises();
+          setExercises(data);
+        } catch (error) {
+          console.error('Failed to load exercises:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchExercises();
+    }
+  }, [isEditing]);
 
   const handleAddSet = () => {
     setSets([
@@ -99,12 +121,31 @@ const WorkoutDetails = ({ workout }) => {
         <div className="edit-form">
           <div className="form-group">
             <label>Exercise:</label>
-            <input 
-              type="text" 
-              value={title} 
-              onChange={(e) => setTitle(e.target.value)}
-              className="form-input"
-            />
+            {loading ? (
+              <div className="loading">Loading exercises...</div>
+            ) : (
+              <select 
+                value={title} 
+                onChange={(e) => setTitle(e.target.value)}
+                className="form-select"
+              >
+                {category && exercises[category] && 
+                  exercises[category].map((exercise) => (
+                    <option key={exercise} value={exercise}>
+                      {exercise}
+                    </option>
+                  ))
+                }
+                {/* Add current exercise if not in the list */}
+                {category && exercises[category] && 
+                  !exercises[category].includes(title) && (
+                    <option key={title} value={title}>
+                      {title}
+                    </option>
+                  )
+                }
+              </select>
+            )}
           </div>
 
           <div className="form-group">

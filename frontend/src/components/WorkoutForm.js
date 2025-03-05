@@ -1,16 +1,34 @@
-import { useState } from "react"
+import { useState, useEffect } from "react";
 import { useWorkoutConext } from "../hooks/useWorkoutsContext";
-import { WORKOUT_EXERCISES, addExerciseToCategory } from "../utils/workExercises";
+import { getWorkoutExercises, addExerciseToCategory } from "../utils/exerciseService";
 
 const WorkoutForm = () => {
-   const { dispatch } = useWorkoutConext()
+   const { dispatch } = useWorkoutConext();
    const [title, setTitle] = useState('');
    const [category, setCategory] = useState('');
    const [sets, setSets] = useState([{ setNumber: 1, reps: '', weight: '' }]);
    const [error, setError] = useState(null);
-   const [emptyFields, setEmptyFields] = useState([])
+   const [emptyFields, setEmptyFields] = useState([]);
    const [isCustomExercise, setIsCustomExercise] = useState(false);
    const [newExercise, setNewExercise] = useState('');
+   const [exercises, setExercises] = useState({});
+   const [loading, setLoading] = useState(true);
+
+   // Fetch exercises when component mounts
+   useEffect(() => {
+     const fetchExercises = async () => {
+       try {
+         const data = await getWorkoutExercises();
+         setExercises(data);
+       } catch (error) {
+         setError('Failed to load exercises. Please try again later.');
+       } finally {
+         setLoading(false);
+       }
+     };
+
+     fetchExercises();
+   }, []);
 
     const handleAddSet = () => {
         setSets([
@@ -59,24 +77,32 @@ const WorkoutForm = () => {
         setNewExercise('');
     };
 
-    const handleAddNewExercise = () => {
+    const handleAddNewExercise = async () => {
         if (newExercise.trim() && category) {
-            // Add the new exercise to the category
-            addExerciseToCategory(category, newExercise.trim());
-            
-            // Set the newly added exercise as the selected title
-            setTitle(newExercise.trim());
-            
-            // Reset the new exercise input
-            setNewExercise('');
-            
-            // Exit custom exercise mode
-            setIsCustomExercise(false);
+            try {
+                setError(null);
+                // Use the updated function that calls the API
+                const updatedExercises = await addExerciseToCategory(category, newExercise.trim());
+                
+                // Update local state with the new exercises
+                setExercises(updatedExercises);
+                
+                // Set the newly added exercise as the selected title
+                setTitle(newExercise.trim());
+                
+                // Reset the new exercise input
+                setNewExercise('');
+                
+                // Exit custom exercise mode
+                setIsCustomExercise(false);
+            } catch (error) {
+                setError(error.message || 'Failed to add exercise');
+            }
         }
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
         // Validate sets - ensure all sets have reps and weight
         const invalidSets = sets.some(set => !set.reps || !set.weight);
@@ -94,7 +120,7 @@ const WorkoutForm = () => {
                 reps: Number(set.reps),
                 weight: Number(set.weight)
             }))
-        }
+        };
 
         const response = await fetch('/api/workouts', {
             method: 'POST',
@@ -102,22 +128,22 @@ const WorkoutForm = () => {
             headers: {
                 'Content-Type': 'application/json'
             }
-        })
-        const json = await response.json()
+        });
+        const json = await response.json();
 
         if (!response.ok) {
-            setError(json.error)
-            setEmptyFields(json.emptyFields || [])
+            setError(json.error);
+            setEmptyFields(json.emptyFields || []);
         } else {
             // Reset form
-            setTitle('')
-            setCategory('')
-            setSets([{ setNumber: 1, reps: '', weight: '' }])
-            setError(null)
-            setEmptyFields([])
-            dispatch({ type: 'CREATE_WORKOUT', payload: json })
+            setTitle('');
+            setCategory('');
+            setSets([{ setNumber: 1, reps: '', weight: '' }]);
+            setError(null);
+            setEmptyFields([]);
+            dispatch({ type: 'CREATE_WORKOUT', payload: json });
         }
-    }
+    };
 
     return (
         <form className="create-workout-container" onSubmit={handleSubmit}>
@@ -139,7 +165,11 @@ const WorkoutForm = () => {
                 <option value="Core">Core</option>
             </select>
 
-            {category && (
+            {loading && category && (
+                <div className="loading">Loading exercises...</div>
+            )}
+
+            {!loading && category && (
                 <div className="exercise-selection">
                     <label>Exercise:</label>
                     {!isCustomExercise ? (
@@ -157,7 +187,7 @@ const WorkoutForm = () => {
                         >
                             <option value="">Select Exercise</option>
                             <option value="custom">Add Custom Exercise</option>
-                            {WORKOUT_EXERCISES[category].map((exercise) => (
+                            {exercises[category] && exercises[category].map((exercise) => (
                                 <option key={exercise} value={exercise}>
                                     {exercise}
                                 </option>
@@ -283,7 +313,7 @@ const WorkoutForm = () => {
                 {error && <div className="error">{error}</div>}
             </div>
         </form>
-    )
-}
+    );
+};
 
-export default WorkoutForm
+export default WorkoutForm;

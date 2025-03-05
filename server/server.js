@@ -3,6 +3,7 @@ const express = require('express')
 const mongoose = require("mongoose")
 const path = require('path')
 const workoutRoutes = require('./routes/workouts')
+const exerciseRoutes = require('./routes/exercises');
 
 // express app init
 const app = express()
@@ -30,6 +31,18 @@ app.use('/api/workouts', async (req, res, next) => {
     }
     next()
 }, workoutRoutes)
+
+app.use('/api/exercises', exerciseRoutes);
+const { initializeDefaultExercises } = require('./controllers/exerciseController');
+
+(async () => {
+    try {
+      await initializeDefaultExercises({}, { status: () => ({ json: () => {} })});
+      console.log('Default exercises initialized');
+    } catch (error) {
+      console.error('Failed to initialize default exercises:', error);
+    }
+  })();
 
 // Static file serving in production
 if (process.env.NODE_ENV === 'production') {
