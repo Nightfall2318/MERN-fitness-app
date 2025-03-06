@@ -1,4 +1,4 @@
-// components/ExerciseProgressDashboard.js - Fixed for deployment
+// components/ExerciseProgressDashboard.js - Fixed warnings
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useWorkoutConext } from '../hooks/useWorkoutsContext';
@@ -12,9 +12,10 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory })
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [progressData, setProgressData] = useState([]);
+  // Remove unused chartWidth state
   const [chartHeight, setChartHeight] = useState(window.innerWidth > 400 ? 400 : 250);
 
-  // Handle window resize for responsive charts - fixed to avoid unused variable
+  // Handle window resize for responsive charts
   useEffect(() => {
     const handleResize = () => {
       setChartHeight(window.innerWidth > 400 ? 400 : 250);
@@ -43,7 +44,7 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory })
     };
 
     fetchExercises();
-  }, []);
+  }, [selectedCategory]); // Added selectedCategory as dependency
 
   // Handle pre-selected category from URL params
   useEffect(() => {
