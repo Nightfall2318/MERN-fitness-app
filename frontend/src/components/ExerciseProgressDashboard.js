@@ -12,7 +12,7 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory })
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [progressData, setProgressData] = useState([]);
-  const [chartWidth, setChartWidth] = useState(window.innerWidth > 500 ? 500 : window.innerWidth - 40);
+  const [setChartWidth] = useState(window.innerWidth > 500 ? 500 : window.innerWidth - 40);
   const [chartHeight, setChartHeight] = useState(window.innerWidth > 400 ? 400 : 250);
 
   // Handle window resize for responsive charts
@@ -45,7 +45,7 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory })
     };
 
     fetchExercises();
-  }, []);
+  }, [selectedCategory]);
 
   // Handle pre-selected category from URL params
   useEffect(() => {
