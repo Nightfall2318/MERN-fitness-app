@@ -1,21 +1,34 @@
-import { Link } from 'react-router-dom'
- 
+// components/Navbar.js
+import { Link, useLocation } from 'react-router-dom';
+
 const NavBar = () => {
+  const location = useLocation();
+  
+  // Helper function to determine if a link is active
+  const isActive = (path) => {
+    return location.pathname === path ? 'active-link' : '';
+  };
+  
   return (
-    <header>
-      <div className="navBar-container">
-        <Link to="/">
-          <h1>Roo Fitness</h1>
+    <header className="navbar-header">
+      <div className="navbar-container">
+        <Link to="/" className="logo-link">
+          <h1 className="site-title">Roo Fitness</h1>
         </Link>
-        <nav>
+        
+        <nav className="main-nav">
           <div className="nav-links">
-            <Link to="/">Home</Link>
-            <Link to="/dashboard">Dashboard</Link>
+            <Link to="/" className={`nav-link ${isActive('/')}`}>
+              Home
+            </Link>
+            <Link to="/dashboard" className={`nav-link ${isActive('/dashboard')}`}>
+              Dashboard
+            </Link>
           </div>
         </nav>
       </div>
     </header>
-  )
-}
+  );
+};
 
 export default NavBar;

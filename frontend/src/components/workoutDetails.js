@@ -13,6 +13,15 @@ const WorkoutDetails = ({ workout }) => {
   const [exercises, setExercises] = useState({});
   const [loading, setLoading] = useState(false);
   
+  // Format date for the date input (YYYY-MM-DD)
+  const formatDateForInput = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+  
+  // Add state for workout date
+  const [workoutDate, setWorkoutDate] = useState(formatDateForInput(workout.createdAt));
+  
   // Ensure sets is always an array, even if the data is incorrect
   const [sets, setSets] = useState(() => {
     // If sets is not an array, create a default set from old data
@@ -65,11 +74,22 @@ const WorkoutDetails = ({ workout }) => {
   };
 
   const handleEdit = async () => {
+    // Create a date object from the date input
+    const updatedDate = new Date(workoutDate);
+    
+    // Preserve the original time portion if available
+    const originalDate = new Date(workout.createdAt);
+    if (!isNaN(originalDate.getTime())) {
+      updatedDate.setHours(originalDate.getHours());
+      updatedDate.setMinutes(originalDate.getMinutes());
+      updatedDate.setSeconds(originalDate.getSeconds());
+    }
+
     const updatedWorkout = { 
       title, 
       category, 
       sets,
-      createdAt: workout.createdAt  // Preserve original creation date
+      createdAt: updatedDate.toISOString()  // Use the updated date
     };
 
     const response = await fetch(`/api/workouts/${workout._id}`, {
@@ -170,6 +190,16 @@ const WorkoutDetails = ({ workout }) => {
               <option value="Arms">Arms</option>
               <option value="Core">Core</option>
             </select>
+          </div>
+          
+          <div className="form-group">
+            <label>Date:</label>
+            <input
+              type="date"
+              value={workoutDate}
+              onChange={(e) => setWorkoutDate(e.target.value)}
+              className="form-input"
+            />
           </div>
 
           <div className="sets-container">
