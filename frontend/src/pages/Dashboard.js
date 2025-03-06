@@ -5,7 +5,8 @@ import ExerciseProgressDashboard from '../components/ExerciseProgressDashboard';
 import { useWorkoutConext } from '../hooks/useWorkoutsContext';
 
 const Dashboard = () => {
-  const { workouts, dispatch } = useWorkoutConext();
+  // Remove workouts from destructuring since it's not used
+  const { dispatch } = useWorkoutConext();
   const location = useLocation();
   const [preSelectedExercise, setPreSelectedExercise] = useState(null);
   const [preSelectedCategory, setPreSelectedCategory] = useState(null);
