@@ -5,7 +5,7 @@ import ExerciseProgressDashboard from '../components/ExerciseProgressDashboard';
 import { useWorkoutConext } from '../hooks/useWorkoutsContext';
 
 const Dashboard = () => {
-  const { dispatch } = useWorkoutConext();
+  const { workouts, dispatch } = useWorkoutConext();
   const location = useLocation();
   const [preSelectedExercise, setPreSelectedExercise] = useState(null);
   const [preSelectedCategory, setPreSelectedCategory] = useState(null);
