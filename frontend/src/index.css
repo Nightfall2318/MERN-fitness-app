@@ -852,3 +852,157 @@
   opacity: 1;
   visibility: visible;
 }
+
+/* Enhanced mobile responsive styles for dashboard */
+
+/* Base responsive container */
+.responsive-container {
+  width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+/* Dashboard page adjustments */
+@media (max-width: 768px) {
+  .dashboard-page {
+    padding: 10px;
+  }
+  
+  .dashboard-page h1 {
+    font-size: 1.8rem;
+  }
+  
+  .exercise-progress-dashboard {
+    padding: 15px 10px;
+  }
+  
+  .progress-chart-container h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+  }
+}
+
+/* Chart container improvements */
+.progress-chart-container {
+  overflow-x: hidden;
+}
+
+/* Make sure charts are responsive */
+@media (max-width: 576px) {
+  .recharts-wrapper {
+    margin: 0 auto !important;
+    max-width: 100% !important;
+  }
+  
+  /* Adjust axes for better mobile display */
+  .recharts-cartesian-axis-tick-value {
+    font-size: 0.8rem;
+  }
+  
+  /* Increase touchable area for dots */
+  .recharts-dot {
+    r: 6;
+  }
+  
+  /* Adjust legends */
+  .recharts-legend-item {
+    margin-right: 8px !important;
+  }
+  
+  .recharts-legend-item-text {
+    font-size: 0.8rem;
+  }
+}
+
+/* Table improvements for mobile */
+@media (max-width: 576px) {
+  .workout-history {
+    margin-top: 25px;
+    overflow-x: auto; /* Allow horizontal scrolling for tables */
+  }
+  
+  .workout-history h3 {
+    text-align: left;
+    margin-left: 5px;
+    font-size: 1.2rem;
+  }
+  
+  .history-table {
+    min-width: 300px; /* Ensure table has minimum width */
+    font-size: 0.9rem;
+  }
+  
+  .history-table th, 
+  .history-table td {
+    padding: 8px 5px;
+  }
+  
+  /* Make date column narrower */
+  .history-table th:first-child,
+  .history-table td:first-child {
+    max-width: 70px;
+  }
+  
+  /* Make set column very narrow */
+  .history-table th:nth-child(2),
+  .history-table td:nth-child(2) {
+    max-width: 40px;
+  }
+  
+  /* Compact design for small screens */
+  @media (max-width: 375px) {
+    .history-table {
+      font-size: 0.8rem;
+    }
+    
+    .history-table th, 
+    .history-table td {
+      padding: 6px 3px;
+    }
+  }
+}
+
+/* Dashboard controls adjustments */
+@media (max-width: 576px) {
+  .dashboard-controls {
+    padding: 10px;
+    margin-bottom: 20px;
+    gap: 10px;
+  }
+  
+  .control-group {
+    min-width: 100%;
+  }
+  
+  .control-group label {
+    font-size: 0.9rem;
+    margin-bottom: 3px;
+  }
+  
+  .control-group select {
+    padding: 6px 8px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Fix for chart labels on mobile */
+@media (max-width: 480px) {
+  .recharts-label {
+    font-size: 0.75rem !important;
+  }
+  
+  /* Improve touch targets */
+  .recharts-layer {
+    cursor: pointer;
+  }
+  
+  /* Fix text overflow in tooltips */
+  .recharts-tooltip-wrapper {
+    max-width: 90vw;
+  }
+  
+  .recharts-default-tooltip {
+    padding: 6px !important;
+  }
+}
+

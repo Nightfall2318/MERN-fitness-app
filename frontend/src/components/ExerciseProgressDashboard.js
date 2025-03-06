@@ -1,4 +1,4 @@
-// components/ExerciseProgressDashboard.js
+// components/ExerciseProgressDashboard.js - Updated for better mobile display
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useWorkoutConext } from '../hooks/useWorkoutsContext';
@@ -12,6 +12,21 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory })
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [progressData, setProgressData] = useState([]);
+  const [chartWidth, setChartWidth] = useState(window.innerWidth > 500 ? 500 : window.innerWidth - 40);
+  const [chartHeight, setChartHeight] = useState(window.innerWidth > 400 ? 400 : 250);
+
+  // Handle window resize for responsive charts
+  useEffect(() => {
+    const handleResize = () => {
+      setChartWidth(window.innerWidth > 768 ? 600 : window.innerWidth - 40);
+      setChartHeight(window.innerWidth > 400 ? 400 : 250);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Set initial size
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Fetch exercise categories and options when component mounts
   useEffect(() => {
@@ -30,7 +45,7 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory })
     };
 
     fetchExercises();
-  }, [selectedCategory]);
+  }, []);
 
   // Handle pre-selected category from URL params
   useEffect(() => {
@@ -82,23 +97,27 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory })
     // Map the workouts to chart data format
     const chartData = relevantWorkouts.map(workout => {
       // For each workout, calculate the average weight and max reps across all sets
-      const totalWeight = workout.sets.reduce((sum, set) => sum + set.weight, 0);
-      const avgWeight = totalWeight / workout.sets.length;
+      const totalWeight = workout.sets.reduce((sum, set) => sum + Number(set.weight), 0);
+      const avgWeight = parseFloat((totalWeight / workout.sets.length).toFixed(1));
       
-      const maxReps = Math.max(...workout.sets.map(set => set.reps));
+      const maxReps = Math.max(...workout.sets.map(set => Number(set.reps)));
       
       const date = new Date(workout.createdAt);
+      const formattedDate = date.toLocaleDateString(undefined, {
+        month: 'numeric',
+        day: 'numeric'
+      });
       
       return {
-        date: date.toLocaleDateString(),
+        date: formattedDate,
         timestamp: date.getTime(), // For sorting
         avgWeight: avgWeight,
         maxReps: maxReps,
         // Include individual set data for detailed view
         sets: workout.sets.map(set => ({
           setNumber: set.setNumber,
-          weight: set.weight,
-          reps: set.reps
+          weight: Number(set.weight),
+          reps: Number(set.reps)
         }))
       };
     });
@@ -120,6 +139,33 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory })
 
   const handleMetricChange = (e) => {
     setSelectedMetric(e.target.value);
+  };
+
+  // Custom tooltip for better mobile display
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="custom-tooltip">
+          <p className="tooltip-date">{label}</p>
+          <p className="tooltip-data">
+            {selectedMetric === 'weight' 
+              ? `Avg Weight: ${payload[0].value}kg` 
+              : `Max Reps: ${payload[0].value}`}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Format for short display on mobile
+  const formatXAxis = (tickItem) => {
+    if (window.innerWidth < 400) {
+      // Just return day for very small screens
+      const dateParts = tickItem.split('/');
+      return dateParts.length > 1 ? dateParts[1] : tickItem;
+    }
+    return tickItem;
   };
 
   return (
@@ -167,63 +213,85 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory })
       {selectedExercise && progressData.length > 0 ? (
         <div className="progress-chart-container">
           <h3>{selectedExercise} Progress</h3>
-          <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={progressData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis 
-                label={{ 
-                  value: selectedMetric === 'weight' ? 'Weight (kg)' : 'Reps', 
-                  angle: -90, 
-                  position: 'insideLeft' 
-                }} 
-              />
-              <Tooltip />
-              <Legend />
-              {selectedMetric === 'weight' ? (
-                <Line 
-                  type="monotone" 
-                  dataKey="avgWeight" 
-                  name="Average Weight" 
-                  stroke="#8884d8" 
-                  activeDot={{ r: 8 }} 
+          
+          <div className="chart-wrapper">
+            <ResponsiveContainer width="100%" height={chartHeight}>
+              <LineChart 
+                data={progressData}
+                margin={{ 
+                  top: 10, 
+                  right: 10, 
+                  left: window.innerWidth < 400 ? 0 : 20, 
+                  bottom: 5 
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="date" 
+                  tickFormatter={formatXAxis} 
+                  tick={{ fontSize: window.innerWidth < 400 ? 10 : 12 }}
                 />
-              ) : (
-                <Line 
-                  type="monotone" 
-                  dataKey="maxReps" 
-                  name="Max Reps" 
-                  stroke="#82ca9d" 
-                  activeDot={{ r: 8 }} 
+                <YAxis 
+                  label={{ 
+                    value: selectedMetric === 'weight' ? 'kg' : 'Reps', 
+                    angle: -90, 
+                    position: 'insideLeft',
+                    style: { textAnchor: 'middle', fontSize: window.innerWidth < 400 ? 10 : 12 }
+                  }} 
+                  tick={{ fontSize: window.innerWidth < 400 ? 10 : 12 }}
+                  width={window.innerWidth < 400 ? 25 : 35}
                 />
-              )}
-            </LineChart>
-          </ResponsiveContainer>
+                <Tooltip content={<CustomTooltip />} />
+                <Legend wrapperStyle={{ fontSize: window.innerWidth < 400 ? 10 : 12 }} />
+                {selectedMetric === 'weight' ? (
+                  <Line 
+                    type="monotone" 
+                    dataKey="avgWeight" 
+                    name="Avg Weight" 
+                    stroke="#8884d8" 
+                    activeDot={{ r: window.innerWidth < 400 ? 6 : 8 }} 
+                    strokeWidth={window.innerWidth < 400 ? 2 : 3}
+                  />
+                ) : (
+                  <Line 
+                    type="monotone" 
+                    dataKey="maxReps" 
+                    name="Max Reps" 
+                    stroke="#82ca9d" 
+                    activeDot={{ r: window.innerWidth < 400 ? 6 : 8 }} 
+                    strokeWidth={window.innerWidth < 400 ? 2 : 3}
+                  />
+                )}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
           
           <div className="workout-history">
             <h3>Workout History</h3>
-            <table className="history-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Set</th>
-                  <th>Weight (kg)</th>
-                  <th>Reps</th>
-                </tr>
-              </thead>
-              <tbody>
-                {progressData.map((workout, workoutIndex) => 
-                  workout.sets.map((set, setIndex) => (
-                    <tr key={`${workoutIndex}-${setIndex}`}>
-                      {setIndex === 0 && <td rowSpan={workout.sets.length}>{workout.date}</td>}
-                      <td>{set.setNumber}</td>
-                      <td>{set.weight}</td>
-                      <td>{set.reps}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+            <div className="table-container">
+              <table className="history-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Set</th>
+                    <th>Weight (kg)</th>
+                    <th>Reps</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {progressData.map((workout, workoutIndex) => 
+                    workout.sets.map((set, setIndex) => (
+                      <tr key={`${workoutIndex}-${setIndex}`}>
+                        {setIndex === 0 && <td rowSpan={workout.sets.length}>{workout.date}</td>}
+                        <td>{set.setNumber}</td>
+                        <td>{set.weight}</td>
+                        <td>{set.reps}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       ) : (
