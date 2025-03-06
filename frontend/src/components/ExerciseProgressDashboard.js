@@ -30,7 +30,7 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory })
     };
 
     fetchExercises();
-  }, []);
+  }, [selectedCategory]);
 
   // Handle pre-selected category from URL params
   useEffect(() => {
