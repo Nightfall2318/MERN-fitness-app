@@ -1,4 +1,4 @@
-// components/ExerciseProgressDashboard.js - Updated for better mobile display
+// components/ExerciseProgressDashboard.js - Fixed for deployment
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useWorkoutConext } from '../hooks/useWorkoutsContext';
@@ -12,13 +12,11 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory })
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [progressData, setProgressData] = useState([]);
-  const [setChartWidth] = useState(window.innerWidth > 500 ? 500 : window.innerWidth - 40);
   const [chartHeight, setChartHeight] = useState(window.innerWidth > 400 ? 400 : 250);
 
-  // Handle window resize for responsive charts
+  // Handle window resize for responsive charts - fixed to avoid unused variable
   useEffect(() => {
     const handleResize = () => {
-      setChartWidth(window.innerWidth > 768 ? 600 : window.innerWidth - 40);
       setChartHeight(window.innerWidth > 400 ? 400 : 250);
     };
     
@@ -45,7 +43,7 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory })
     };
 
     fetchExercises();
-  }, [selectedCategory]);
+  }, []);
 
   // Handle pre-selected category from URL params
   useEffect(() => {
