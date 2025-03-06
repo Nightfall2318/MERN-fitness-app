@@ -1,9 +1,12 @@
+// components/WorkoutDetails.js
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useWorkoutConext } from "../hooks/useWorkoutsContext";
 import { getWorkoutExercises } from "../utils/exerciseService";
 
 const WorkoutDetails = ({ workout }) => {
   const { dispatch } = useWorkoutConext();
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(workout.title);
   const [category, setCategory] = useState(workout.category);
@@ -92,6 +95,11 @@ const WorkoutDetails = ({ workout }) => {
     if (response.ok) {
       dispatch({ type: 'DELETE_WORKOUT', payload: json });
     }
+  };
+
+  // Navigate to dashboard to view exercise progress
+  const handleViewProgress = () => {
+    navigate(`/dashboard?exercise=${encodeURIComponent(workout.title)}&category=${encodeURIComponent(workout.category)}`);
   };
 
   // Safe mapping function
@@ -208,7 +216,7 @@ const WorkoutDetails = ({ workout }) => {
         </div>
       ) : (
         <>
-          <h3>{workout.title}</h3>
+          <h3 className="workout-title" onClick={handleViewProgress}>{workout.title}</h3>
           <p><strong>Category: </strong>{workout.category}</p>
           <div className="sets-summary">
             {renderSets(workout.sets)}
@@ -216,6 +224,7 @@ const WorkoutDetails = ({ workout }) => {
           <p><strong>Date: </strong>{new Date(workout.createdAt).toLocaleDateString()}</p>
 
           <div className="button-container">
+            <button className="viewProgressBtn" onClick={handleViewProgress}>View Progress</button>
             <button className="editBtn" onClick={() => setIsEditing(true)}>Edit</button>
             <span className="material-symbols-outlined delete-icon" onClick={handleClick}>
               delete

@@ -25,6 +25,7 @@ MERN-fitness-app /
 - [react.js] (https://react.dev/learn/installation)
 - [nodemon](npm install nodemon)
 - [date-picker](npm install react-datepicker)
+- [recharts](npm install recharts)
 
 ## Setup
 

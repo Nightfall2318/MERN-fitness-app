@@ -1,5 +1,6 @@
-import {BrowserRouter,Routes,Route} from 'react-router-dom'
+import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import Home from './pages/Home'
+import Dashboard from './pages/Dashboard'
 import NavBar from './components/Navbar'
   
 function App() {
@@ -12,6 +13,10 @@ function App() {
           <Route
             path="/"
             element={<Home/>}
+          />
+          <Route
+            path="/dashboard"
+            element={<Dashboard/>}
           />
         </Routes>
       </div>
