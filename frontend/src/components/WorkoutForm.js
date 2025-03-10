@@ -6,7 +6,16 @@ const WorkoutForm = () => {
    const { dispatch } = useWorkoutConext();
    const [title, setTitle] = useState('');
    const [category, setCategory] = useState('');
+   const [workoutType, setWorkoutType] = useState('weights');
+   
+   // Weights workout fields
    const [sets, setSets] = useState([{ setNumber: 1, reps: '', weight: '' }]);
+   
+   // Cardio workout fields
+   const [duration, setDuration] = useState('');
+   const [distance, setDistance] = useState('');
+   const [distanceUnit, setDistanceUnit] = useState('km');
+   
    const [error, setError] = useState(null);
    const [emptyFields, setEmptyFields] = useState([]);
    const [isCustomExercise, setIsCustomExercise] = useState(false);
@@ -29,6 +38,23 @@ const WorkoutForm = () => {
 
      fetchExercises();
    }, []);
+
+    // Reset form state when workout type changes
+    useEffect(() => {
+      if (workoutType === 'weights') {
+        setDuration('');
+        setDistance('');
+        if (sets.length === 0) {
+          setSets([{ setNumber: 1, reps: '', weight: '' }]);
+        }
+      } else {
+        setSets([]);
+      }
+      
+      // Reset category and title when changing workout type
+      setCategory('');
+      setTitle('');
+    }, [workoutType]);
 
     const handleAddSet = () => {
         setSets([
@@ -103,51 +129,260 @@ const WorkoutForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(null);
+        setEmptyFields([]);
 
-        // Validate sets - ensure all sets have reps and weight
-        const invalidSets = sets.some(set => !set.reps || !set.weight);
-        
-        if (invalidSets) {
-            setError('Please fill in all set details');
-            return;
-        }
+        let workoutData = {
+            title,
+            category,
+            workoutType
+        };
 
-        const workout = { 
-            title, 
-            category, 
-            sets: sets.map(set => ({
+        if (workoutType === 'weights') {
+            // Validate sets for weights workout
+            const invalidSets = sets.some(set => !set.reps || !set.weight);
+            
+            if (invalidSets) {
+                setError('Please fill in all set details');
+                return;
+            }
+
+            workoutData.sets = sets.map(set => ({
                 setNumber: set.setNumber,
                 reps: Number(set.reps),
                 weight: Number(set.weight)
-            }))
-        };
-
-        const response = await fetch('/api/workouts', {
-            method: 'POST',
-            body: JSON.stringify(workout),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const json = await response.json();
-
-        if (!response.ok) {
-            setError(json.error);
-            setEmptyFields(json.emptyFields || []);
+            }));
         } else {
-            // Reset form
-            setTitle('');
-            setCategory('');
-            setSets([{ setNumber: 1, reps: '', weight: '' }]);
-            setError(null);
-            setEmptyFields([]);
-            dispatch({ type: 'CREATE_WORKOUT', payload: json });
+            // Validate cardio workout data
+            if (!duration || !distance) {
+                const missingFields = [];
+                if (!duration) missingFields.push('duration');
+                if (!distance) missingFields.push('distance');
+                
+                setEmptyFields(missingFields);
+                setError('Please fill in all cardio details');
+                return;
+            }
+
+            workoutData.cardio = {
+                duration: Number(duration),
+                distance: Number(distance),
+                distanceUnit
+            };
+        }
+
+        try {
+            const response = await fetch('/api/workouts', {
+                method: 'POST',
+                body: JSON.stringify(workoutData),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const json = await response.json();
+
+            if (!response.ok) {
+                setError(json.error);
+                setEmptyFields(json.emptyFields || []);
+            } else {
+                // Reset form
+                setTitle('');
+                setCategory('');
+                setSets([{ setNumber: 1, reps: '', weight: '' }]);
+                setDuration('');
+                setDistance('');
+                setDistanceUnit('km');
+                setError(null);
+                setEmptyFields([]);
+                dispatch({ type: 'CREATE_WORKOUT', payload: json });
+            }
+        } catch (error) {
+            setError('Failed to submit workout. Please try again.');
+        }
+    };
+
+    // Render category options based on workout type
+    const renderCategoryOptions = () => {
+        if (workoutType === 'weights') {
+            return (
+                <>
+                    <option value="">Select Category</option>
+                    <option value="Legs">Legs</option>
+                    <option value="Chest">Chest</option>
+                    <option value="Back">Back</option>
+                    <option value="Shoulders">Shoulders</option>
+                    <option value="Arms">Arms</option>
+                    <option value="Core">Core</option>
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <option value="">Select Category</option>
+                    <option value="Running">Running</option>
+                    <option value="Cycling">Cycling</option>
+                    <option value="Swimming">Swimming</option>
+                    <option value="Rowing">Rowing</option>
+                    <option value="Elliptical">Elliptical</option>
+                </>
+            );
+        }
+    };
+
+    // Render the appropriate form based on workout type
+    const renderWorkoutInputs = () => {
+        if (workoutType === 'weights') {
+            // Weight training form
+            return (
+                <div className="sets-container">
+                    <h4>Sets</h4>
+                    {sets.map((set, index) => (
+                        <div key={index} className="set-input-group">
+                            <span>Set {set.setNumber}</span>
+                            
+                            <div className="input-with-buttons">                           
+                                <button 
+                                    type="button"
+                                    onClick={() => incrementValue(index, 'weight', -1)}
+                                    className="increment-btn"
+                                >
+                                    -
+                                </button>
+                                <input
+                                    type="number"
+                                    placeholder="Weight(kg)"
+                                    value={set.weight}
+                                    onChange={(e) => updateSet(index, 'weight', e.target.value)}
+                                    className="set-input"
+                                    required
+                                    min="0"
+                                    step="0.1"
+                                />
+                                <button 
+                                    type="button"
+                                    onClick={() => incrementValue(index, 'weight', 1)}
+                                    className="increment-btn"
+                                >
+                                    +
+                                </button>
+                            </div>
+
+                            <div className="input-with-buttons">
+                                <button 
+                                    type="button"
+                                    onClick={() => incrementValue(index, 'reps', -1)}
+                                    className="increment-btn"
+                                >
+                                    -
+                                </button>
+                                <input
+                                    type="number"
+                                    placeholder="Reps"
+                                    value={set.reps}
+                                    onChange={(e) => updateSet(index, 'reps', e.target.value)}
+                                    className="set-input"
+                                    required
+                                    min="0"
+                                />
+                                <button 
+                                    type="button"
+                                    onClick={() => incrementValue(index, 'reps', 1)}
+                                    className="increment-btn"
+                                >
+                                    +
+                                </button>
+                            </div>
+
+                            {sets.length > 1 && (
+                                <button 
+                                    type="button" 
+                                    onClick={() => removeSet(index)}
+                                    className="remove-set-btn"
+                                >
+                                    Remove Set
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                    
+                    <button 
+                        type="button" 
+                        onClick={handleAddSet}
+                        className="add-set-btn-main"
+                    >
+                        Add Another Set
+                    </button>
+                </div>
+            );
+        } else {
+            // Cardio workout form
+            return (
+                <div className="cardio-container">
+                    <h4>Cardio Details</h4>
+                    <div className="form-group">
+                        <label>Duration (minutes):</label>
+                        <input
+                            type="number"
+                            value={duration}
+                            onChange={(e) => setDuration(e.target.value)}
+                            className={emptyFields.includes("duration") ? "error" : ""}
+                            required
+                            min="0"
+                            step="1"
+                        />
+                    </div>
+                    
+                    <div className="form-group">
+                        <label>Distance:</label>
+                        <div className="distance-input-container">
+                            <input
+                                type="number"
+                                value={distance}
+                                onChange={(e) => setDistance(e.target.value)}
+                                className={`distance-input ${emptyFields.includes("distance") ? "error" : ""}`}
+                                required
+                                min="0"
+                                step="0.01"
+                            />
+                            <select
+                                value={distanceUnit}
+                                onChange={(e) => setDistanceUnit(e.target.value)}
+                                className="distance-unit"
+                            >
+                                <option value="km">km</option>
+                                <option value="mi">mi</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            );
         }
     };
 
     return (
         <form className="create-workout-container" onSubmit={handleSubmit}>
             <h3>Add a new Workout</h3>
+            
+            <div className="form-group">
+                <label>Workout Type:</label>
+                <div className="workout-type-selector">
+                    <button
+                        type="button"
+                        className={`workout-type-btn ${workoutType === 'weights' ? 'active' : ''}`}
+                        onClick={() => setWorkoutType('weights')}
+                    >
+                        Weights
+                    </button>
+                    <button
+                        type="button"
+                        className={`workout-type-btn ${workoutType === 'cardio' ? 'active' : ''}`}
+                        onClick={() => setWorkoutType('cardio')}
+                    >
+                        Cardio
+                    </button>
+                </div>
+            </div>
 
             <label>Category:</label>
             <select
@@ -156,20 +391,10 @@ const WorkoutForm = () => {
                 className={emptyFields.includes("category") ? "error" : ""}
                 required
             >
-                <option value="">Select Category</option>
-                <option value="Legs">Legs</option>
-                <option value="Chest">Chest</option>
-                <option value="Back">Back</option>
-                <option value="Shoulders">Shoulders</option>
-                <option value="Arms">Arms</option>
-                <option value="Core">Core</option>
+                {renderCategoryOptions()}
             </select>
 
-            {loading && category && (
-                <div className="loading">Loading exercises...</div>
-            )}
-
-            {!loading && category && (
+            {workoutType === 'weights' && !loading && category && (
                 <div className="exercise-selection">
                     <label>Exercise:</label>
                     {!isCustomExercise ? (
@@ -226,92 +451,31 @@ const WorkoutForm = () => {
                     )}
                 </div>
             )}
+            
+            {workoutType === 'cardio' && category && (
+                <div className="exercise-selection">
+                    <label>Activity Name:</label>
+                    <select
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        className={emptyFields.includes("title") ? "error" : ""}
+                        required
+                    >
+                        <option value="">Select {category} Activity</option>
+                        {exercises[category] && exercises[category].map((activity) => (
+                            <option key={activity} value={activity}>
+                                {activity}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            )}
 
-            <div className="sets-container">
-                <h4>Sets</h4>
-                {sets.map((set, index) => (
-                    <div key={index} className="set-input-group">
-                        <span>Set {set.setNumber}</span>
-                        
-                        <div className="input-with-buttons">                           
-                            <button 
-                                type="button"
-                                onClick={() => incrementValue(index, 'weight', -1)}
-                                className="increment-btn"
-                            >
-                                -
-                            </button>
-                            <input
-                                type="number"
-                                placeholder="Weight(kg)"
-                                value={set.weight}
-                                onChange={(e) => updateSet(index, 'weight', e.target.value)}
-                                className="set-input"
-                                required
-                                min="0"
-                                step="0.1"
-                            />
-                            <button 
-                                type="button"
-                                onClick={() => incrementValue(index, 'weight', 1)}
-                                className="increment-btn"
-                            >
-                                +
-                            </button>
-                        </div>
-
-                        <div className="input-with-buttons">
-                            <button 
-                                type="button"
-                                onClick={() => incrementValue(index, 'reps', -1)}
-                                className="increment-btn"
-                            >
-                                -
-                            </button>
-                            <input
-                                type="number"
-                                placeholder="Reps"
-                                value={set.reps}
-                                onChange={(e) => updateSet(index, 'reps', e.target.value)}
-                                className="set-input"
-                                required
-                                min="0"
-                            />
-                            <button 
-                                type="button"
-                                onClick={() => incrementValue(index, 'reps', 1)}
-                                className="increment-btn"
-                            >
-                                +
-                            </button>
-                        </div>
-
-                        {sets.length > 1 && (
-                            <button 
-                                type="button" 
-                                onClick={() => removeSet(index)}
-                                className="remove-set-btn"
-                            >
-                                Remove Set
-                            </button>
-                        )}
-                    </div>
-                ))}
-                
-                <button 
-                    type="button" 
-                    onClick={handleAddSet}
-                    className="add-set-btn-main"
-                >
-                    Add Another Set
-                </button>    
-                <button 
-                    type="submit"
-                >
-                    Save Exercise
-                </button>
-                {error && <div className="error">{error}</div>}
-            </div>
+            {/* Render the appropriate input fields based on workout type */}
+            {category && renderWorkoutInputs()}
+            
+            <button type="submit">Save Exercise</button>
+            {error && <div className="error">{error}</div>}
         </form>
     );
 };

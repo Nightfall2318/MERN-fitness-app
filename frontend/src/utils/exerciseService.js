@@ -25,12 +25,20 @@ export const getWorkoutExercises = async () => {
     console.error('Error fetching exercises:', error);
     // Return empty categories as fallback
     return {
+      // Weight training categories
       Legs: [],
       Chest: [],
       Back: [],
       Shoulders: [],
       Arms: [],
-      Core: []
+      Core: [],
+      
+      // Cardio categories
+      Running: [],
+      Cycling: [],
+      Swimming: [],
+      Rowing: [],
+      Elliptical: []
     };
   }
 };

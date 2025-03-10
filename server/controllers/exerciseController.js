@@ -91,6 +91,8 @@ const deleteExercise = async (req, res) => {
 // Initialize the database with default exercises if they don't exist
 const initializeDefaultExercises = async (req, res) => {
   const DEFAULT_WORKOUT_EXERCISES = {
+
+    //weights 
     Legs: [
       'Calf Raises', 'Deadlifts', 'Hack Squats', 'Leg Curls', 
       'Leg Extensions', 'Leg Press', 'Lunges', 'Romanian Deadlifts', 
@@ -120,6 +122,23 @@ const initializeDefaultExercises = async (req, res) => {
       'Ab Rollouts', 'Bicycle Crunches', 'Cable Crunches', 'Crunches',
       'Dead Bugs', 'Leg Raises', 'Mountain Climbers', 'Planks',
       'Russian Twists', 'Side Planks'
+    ],
+
+    //cardio 
+    Running: [
+      '5K Run', 'Treadmill', 'Interval Running', 'Trail Running', 'Sprint Training'
+    ],
+    Cycling: [
+      'Road Cycling', 'Stationary Bike', 'Spin Class', 'Mountain Biking', 'Interval Cycling'
+    ],
+    Swimming: [
+      'Freestyle', 'Backstroke', 'Breaststroke', 'Butterfly', 'Mixed Swim'
+    ],
+    Rowing: [
+      'Rowing Machine', 'Outdoor Rowing', 'Interval Rowing', 'Endurance Row', 'Sprint Row'
+    ],
+    Elliptical: [
+      'Standard Elliptical', 'Cross-Trainer', 'Interval Training', 'Reverse Stride', 'Hill Climb'
     ]
   };
 
