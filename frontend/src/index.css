@@ -6,11 +6,19 @@
   --error: #e7195a;
 }
 
+/* Reset and base styles */
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #f1f1f1;
+  width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   background: #f1f1f1;
-  margin: 0;
   font-family: 'Poppins';
-  padding-top: 70px; 
+  padding-top: 70px; /* Adjusted for header height */
 }
 
 .pages {
@@ -29,6 +37,7 @@ body {
   right: 0;
   z-index: 1000;
   width: 100%;
+  height: auto;
 }
 
 .navbar-container {
@@ -39,15 +48,19 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   height: auto;
+  box-sizing: border-box;
 }
 
 .logo-link {
   text-decoration: none;
   color: #333;
+  margin: 0;
+  padding: 0;
 }
 
 .site-title {
   margin: 0;
+  padding: 0;
   font-size: 1.8rem;
   font-weight: 700;
   color: #333;
@@ -56,6 +69,8 @@ body {
 .main-nav {
   display: flex;
   align-items: center;
+  margin: 0;
+  padding: 0;
 }
 
 .nav-links {
@@ -63,6 +78,7 @@ body {
   gap: 1.5rem;
   margin: 0;
   padding: 0;
+  list-style: none;
 }
 
 .nav-link {
@@ -85,6 +101,12 @@ body {
   font-weight: 600;
 }
 
+/* Clean up any excess border or margins */
+.navbar-header::before, .navbar-header::after {
+  content: none;
+}
+/* END OF UPDATED NAVBAR/HEADER STYLES */
+
 /* HOME PAGE */
 .home-content {
   display: flex;
@@ -92,7 +114,7 @@ body {
   gap: 30px;
   max-width: 1000px;
   margin: 0 auto;
-  padding: 20px;
+  background-color: transparent;
 }
 
 .welcome-section {
@@ -513,6 +535,258 @@ select.error {
   margin-top: 20px;
 }
 
+input, select {
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+form button {
+  background: var(--primary);
+  border: 0;
+  color: #fff;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+div.error {
+  padding: 10px;
+  background-color: #ffefff;
+  border: 1px solid var(--error);
+  color: var(--error);
+  border-radius: 4px;
+  margin: 20px 0;
+}
+
+input.error {
+  border: 1px solid var(--error);
+}
+
+select.error {
+  border: 1px solid var(--error) !important;
+}
+
+.workout-page {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.date-nav {
+  width: 250px;
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.date-nav h2 {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.date-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Date List Container - Mobile and Desktop */
+.date-buttons-container {
+  display: flex;
+  flex-direction: column; 
+  gap: 10px;
+}
+
+/* Additional styling for buttons to match vertical layout */
+.date-button {
+  display: block; 
+  width: 100%; 
+  padding: 10px; 
+  margin-top: 10px;
+  text-align: left; 
+  background-color: #f1f1f1; 
+  border: 1px solid #ccc; 
+  border-radius: 4px; 
+  transition: background-color 0.3s ease;
+}
+
+.date-button:hover {
+  background-color: #dcdcdc; 
+}
+
+.date-button.active {
+  background-color: #10b981; 
+  color: white;
+}
+
+.workout-count {
+  margin-left: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.workout-content {
+  flex: 1;
+}
+
+.selected-date-workouts {
+  overflow: scroll;
+  max-height: 70vh;
+  margin: 1rem 0;
+}
+
+.selected-date-workouts h3 {
+  margin: 1rem 0;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.workouts-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .workout-page {
+    flex-direction: column;
+  }
+
+  .date-nav {
+    width: 92%;
+  }
+
+  .date-list {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+
+  .date-button {
+    white-space: nowrap;
+  }
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.workout-form-web {
+  display: block;
+}
+
+.open-modal-btn {
+  display: none;
+  background: var(--primary);
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.close-modal-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: var(--error);
+  color: white;
+  padding: 6px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .workout-form-web {
+    display: none;
+  }
+
+  .open-modal-btn {
+    display: block;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .date-buttons-container {
+    display: none; 
+  }
+  
+  .navbar-container {
+    padding: 0.5rem 1rem;
+  }
+  
+  .site-title {
+    font-size: 1.5rem;
+  }
+  
+  .nav-links {
+    gap: 1rem;
+  }
+  
+  .nav-link {
+    font-size: 0.95rem;
+    padding: 0.4rem 0.6rem;
+  }
+}
+
+.modal-content .date-buttons-container {
+  display: flex !important; 
+  flex-direction: column;
+  max-height: 60vh; 
+  overflow-y: auto;
+  padding-right: 10px; 
+}
+
+@media (min-width: 769px) {
+  .date-buttons-container {
+    display: block;
+  }
+} 
+
 .add-set-btn {
   margin-bottom: 10px;
   background: var(--primary);
@@ -523,7 +797,7 @@ select.error {
   border-radius: 4px;
   cursor: pointer;
 }
- 
+
 .add-set-btn-main {
   margin-bottom: 10px;
   margin-right: 20px;
@@ -647,64 +921,6 @@ select.error {
   cursor: not-allowed;
 }
 
-/* MODAL */
-.open-modal-btn {
-  display: none;
-  background: var(--primary);
-  color: white;
-  padding: 10px;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 1rem;
-  width: 100%;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  position: relative;
-}
-
-.close-modal-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  border: none;
-  background: var(--error);
-  color: white;
-  padding: 6px 10px;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.modal-content .date-buttons-container {
-  display: flex !important; 
-  flex-direction: column;
-  max-height: 60vh; 
-  overflow-y: auto;
-  padding-right: 10px; 
-}
-
-/* CALENDAR */
 .calendar-picker {
   width: 100%;
   padding: 1rem;
@@ -825,11 +1041,10 @@ select.error {
   border-radius: 8px;
 }
 
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.9rem;
+.dashboard-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 .legend-color {
@@ -923,89 +1138,7 @@ select.error {
   background-color: #f9f9f9;
 }
 
-.table-container {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch; 
-  margin-bottom: 10px;
-  position: relative;
-}
-
-.custom-tooltip {
-  background-color: rgba(255, 255, 255, 0.9);
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  max-width: 150px;
-}
-
-.tooltip-date {
-  font-weight: bold;
-  margin: 0 0 5px;
-  font-size: 0.9rem;
-}
-
-.tooltip-data {
-  margin: 0;
-  font-size: 0.85rem;
-}
-
-.responsive-container {
-  width: 100%;
-  padding: 0 10px;
-  box-sizing: border-box;
-}
-
-/* RESPONSIVE STYLES */
-@media (min-width: 768px) {
-  .home-content {
-    flex-direction: row;
-  }
-  
-  .welcome-section {
-    flex: 1;
-  }
-  
-  .workout-form-container {
-    flex: 1;
-  }
-  
-  .date-buttons-container {
-    display: block;
-  }
-}
-
 @media (max-width: 768px) {
-  body {
-    padding-top: 60px; 
-  }
-
-  .dashboard-layout {
-    flex-direction: column;
-  }
-  
-  .date-nav {
-    width: 86%;
-  }
-  
-  .navbar-container {
-    padding: 0.5rem 1rem;
-  }
-  
-  .site-title {
-    font-size: 1.5rem;
-  }
-  
-  .nav-links {
-    gap: 1rem;
-  }
-  
-  .nav-link {
-    font-size: 0.95rem;
-    padding: 0.4rem 0.6rem;
-  }
-
   .dashboard-controls {
     flex-direction: column;
     gap: 15px;
@@ -1033,15 +1166,72 @@ select.error {
     display: none;
   }
 
-  .open-modal-btn {
-    display: block;
-    margin-bottom: 1rem;
-  }
-  
-  .date-buttons-container {
-    display: none;  
-  }
-  
+.workout-title:hover::after {
+  content: '📊';
+  font-size: 0.8em;
+  position: absolute;
+  top: 0;
+  margin-left: 5px;
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.viewProgressBtn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.viewProgressBtn:hover {
+  background: var(--primary);
+}
+
+.viewProgressBtn::before {
+  content: '📈';
+  margin-right: 5px;
+}
+
+.workout-title::after {
+  content: 'View progress';
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s;
+}
+
+.workout-title:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.responsive-container {
+  width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
   .dashboard-page {
     padding: 10px;
   }
@@ -1060,12 +1250,15 @@ select.error {
   }
 }
 
+.progress-chart-container {
+  overflow-x: hidden;
+}
+
 @media (max-width: 576px) {
   .recharts-wrapper {
     margin: 0 auto !important;
     max-width: 100% !important;
   }
-  
   .recharts-cartesian-axis-tick-value {
     font-size: 0.8rem;
   }
@@ -1081,7 +1274,9 @@ select.error {
   .recharts-legend-item-text {
     font-size: 0.8rem;
   }
-  
+}
+
+@media (max-width: 576px) {
   .workout-history {
     margin-top: 25px;
     overflow-x: auto;
@@ -1094,7 +1289,7 @@ select.error {
   }
   
   .history-table {
-    min-width: 300px;
+    min-width: 300px; 
     font-size: 0.9rem;
   }
   
@@ -1102,7 +1297,7 @@ select.error {
   .history-table td {
     padding: 8px 5px;
   }
-
+  
   .history-table th:first-child,
   .history-table td:first-child {
     max-width: 70px;
@@ -1113,6 +1308,19 @@ select.error {
     max-width: 40px;
   }
   
+  @media (max-width: 375px) {
+    .history-table {
+      font-size: 0.8rem;
+    }
+    
+    .history-table th, 
+    .history-table td {
+      padding: 6px 3px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
   .dashboard-controls {
     padding: 10px;
     margin-bottom: 20px;
@@ -1142,7 +1350,7 @@ select.error {
   .recharts-layer {
     cursor: pointer;
   }
-
+  
   .recharts-tooltip-wrapper {
     max-width: 90vw;
   }
@@ -1262,3 +1470,4 @@ select.error {
   color: #ff7700;
 }
 
+}
