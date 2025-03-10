@@ -54,7 +54,7 @@ const WorkoutForm = () => {
       // Reset category and title when changing workout type
       setCategory('');
       setTitle('');
-    }, [workoutType]);
+    }, [workoutType,sets.length]);
 
     const handleAddSet = () => {
         setSets([

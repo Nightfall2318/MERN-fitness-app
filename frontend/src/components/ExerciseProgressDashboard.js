@@ -42,7 +42,7 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory, p
         setSelectedMetric('weight');
       }
     }
-  }, [preSelectedType]);
+  }, [preSelectedType,selectedMetric]);
 
   // Fetch exercise categories and options when component mounts
   useEffect(() => {
@@ -82,7 +82,7 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory, p
     };
 
     fetchExercises();
-  }, [workoutType, selectedCategory]);
+  }, [workoutType, selectedCategory,cardioCategories, weightCategories]);
 
   // Handle pre-selected category from URL params
   useEffect(() => {
@@ -289,24 +289,6 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory, p
         return 'min/km';
       default:
         return '';
-    }
-  };
-
-  // Helper function to get display name for metrics
-  const getMetricDisplayName = () => {
-    switch (selectedMetric) {
-      case 'weight':
-        return 'Avg Weight';
-      case 'reps':
-        return 'Max Reps';
-      case 'distance':
-        return 'Distance';
-      case 'duration':
-        return 'Duration (min)';
-      case 'pace':
-        return 'Pace (min/km)';
-      default:
-        return selectedMetric;
     }
   };
 

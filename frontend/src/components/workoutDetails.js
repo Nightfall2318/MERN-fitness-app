@@ -10,7 +10,7 @@ const WorkoutDetails = ({ workout }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(workout.title);
   const [category, setCategory] = useState(workout.category);
-  const [workoutType, setWorkoutType] = useState(workout.workoutType || 'weights');
+  const [workoutType] = useState(workout.workoutType || 'weights');
   const [exercises, setExercises] = useState({});
   const [loading, setLoading] = useState(false);
   
