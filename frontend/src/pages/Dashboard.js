@@ -1,4 +1,4 @@
-// pages/Dashboard.js - Updated with side-by-side layout and improved CategoryLegend
+// pages/Dashboard.js - Updated with mobile view fixes
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import ExerciseProgressDashboard from '../components/ExerciseProgressDashboard';
@@ -296,7 +296,7 @@ const Dashboard = () => {
                   Select a Date
                 </button>
 
-                <div className="date-buttons-container hidden md:block">
+                <div className="date-buttons-container">
                   {Object.keys(groupedWorkouts)
                     .sort()
                     .reverse()
