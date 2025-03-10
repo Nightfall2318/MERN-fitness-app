@@ -1,4 +1,4 @@
-/* Dashboard.css - Styles for Dashboard.js page */
+/* Dashboard.css - Updated with collapsible workout sections for mobile */
 
 .dashboard-page {
   max-width: 1400px;
@@ -42,7 +42,7 @@
 
 /* Date navigation sidebar */
 .date-nav {
-  width: 280px;
+  width: 300px;
   flex-shrink: 0;
   background: white;
   padding: 1.5rem;
@@ -220,6 +220,81 @@
   display: inline;
 }
 
+/* Mobile-only workout section styles */
+.workout-section {
+  margin-bottom: 20px;
+  background-color: transparent;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.workout-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background-color: #f1f1f1;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 10px;
+}
+
+.workout-section-header:hover {
+  background-color: #e9e9e9;
+}
+
+.workout-section-title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-toggle {
+  transition: transform 0.3s ease;
+  font-size: 0.8rem;
+}
+
+.section-toggle.collapsed {
+  transform: rotate(-90deg);
+}
+
+.workout-section-content {
+  max-height: 2000px; /* Large enough to fit all workout cards */
+  transition: max-height 0.5s ease, opacity 0.3s ease;
+  overflow: hidden;
+  opacity: 1;
+}
+
+.workout-section-content.collapsed {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Section badges for weight/cardio */
+.section-badge {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.section-badge.weights {
+  background-color: #0077cc;
+}
+
+.section-badge.cardio {
+  background-color: #ff7700;
+}
+
 /* Calendar components */
 .calendar-picker {
   width: 100%;
@@ -393,6 +468,11 @@
   .date-button {
     white-space: nowrap;
   }
+  
+  /* On mobile, we hide the workout sections by default */
+  .workout-section-content {
+    padding: 0 5px;
+  }
 }
 
 @media (min-width: 769px) {
@@ -403,6 +483,21 @@
   /* Ensure "Select a Date" button is hidden on desktop */
   .open-modal-btn {
     display: none;
+  }
+  
+  /* On desktop, hide the workout section headers since we don't need collapsible sections */
+  .workout-section-header {
+    display: none;
+  }
+  
+  .workout-section-content {
+    max-height: none !important;
+    opacity: 1 !important;
+    overflow: visible;
+  }
+  
+  .workout-section {
+    margin-bottom: 0;
   }
 }
 
@@ -432,5 +527,9 @@
   .legend-item {
     min-width: 70px;
     font-size: 0.9rem;
+  }
+  
+  .workout-section-title {
+    font-size: 1rem;
   }
 }

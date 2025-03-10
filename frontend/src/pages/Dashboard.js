@@ -1,4 +1,4 @@
-// pages/Dashboard.js - Updated with collapsible legends
+// pages/Dashboard.js - Updated with collapsible workout sections
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import ExerciseProgressDashboard from '../components/ExerciseProgressDashboard';
@@ -22,9 +22,14 @@ const Dashboard = () => {
   const [preSelectedType, setPreSelectedType] = useState(null);
   const [showProgressView, setShowProgressView] = useState(false);
   
-  // New states for collapsible legends
+  // States for collapsible legends
   const [weightsLegendCollapsed, setWeightsLegendCollapsed] = useState(false);
   const [cardioLegendCollapsed, setCardioLegendCollapsed] = useState(false);
+  
+  // New states for collapsible workout sections (mobile only)
+  const [weightsWorkoutsCollapsed, setWeightsWorkoutsCollapsed] = useState(false);
+  const [cardioWorkoutsCollapsed, setCardioWorkoutsCollapsed] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false);
 
   // Category colors for both workout types
   const categoryColors = {
@@ -43,6 +48,24 @@ const Dashboard = () => {
     'Rowing': '#FF9900', // Orange
     'Elliptical': '#9933FF', // Purple
   };
+
+  // Check for mobile view
+  useEffect(() => {
+    const checkMobileView = () => {
+      setIsMobileView(window.innerWidth <= 768);
+    };
+    
+    // Initial check
+    checkMobileView();
+    
+    // Add event listener for window resize
+    window.addEventListener('resize', checkMobileView);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', checkMobileView);
+    };
+  }, []);
 
   // Helper function to get categories for a specific date
   const getCategoriesForDate = (dateString) => {
@@ -298,6 +321,95 @@ const Dashboard = () => {
     );
   };
 
+  // Helper functions to filter workouts by type
+  const getWeightsWorkouts = (workouts) => {
+    return workouts.filter(w => w.workoutType === 'weights' || !w.workoutType);
+  };
+  
+  const getCardioWorkouts = (workouts) => {
+    return workouts.filter(w => w.workoutType === 'cardio');
+  };
+  
+  // Render workout sections - either collapsible (mobile) or regular (desktop)
+  const renderWorkoutSections = () => {
+    if (!selectedDate || !groupedWorkouts[selectedDate]) {
+      return <p>No workouts found for this date.</p>;
+    }
+    
+    const weightsWorkouts = getWeightsWorkouts(groupedWorkouts[selectedDate]);
+    const cardioWorkouts = getCardioWorkouts(groupedWorkouts[selectedDate]);
+    
+    if (isMobileView) {
+      // Mobile view with collapsible sections
+      return (
+        <>
+          {/* Weights workouts section */}
+          {weightsWorkouts.length > 0 && (
+            <div className="workout-section">
+              <div 
+                className="workout-section-header"
+                onClick={() => setWeightsWorkoutsCollapsed(!weightsWorkoutsCollapsed)}
+              >
+                <h4 className="workout-section-title">
+                  <span className="section-badge weights"></span>
+                  Weights Workouts ({weightsWorkouts.length})
+                </h4>
+                <span className={`section-toggle ${weightsWorkoutsCollapsed ? 'collapsed' : ''}`}>
+                  ▼
+                </span>
+              </div>
+              <div className={`workout-section-content ${weightsWorkoutsCollapsed ? 'collapsed' : ''}`}>
+                <div className="workouts-grid">
+                  {weightsWorkouts.map((workout) => (
+                    <WorkoutDetails key={workout._id} workout={workout} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Cardio workouts section */}
+          {cardioWorkouts.length > 0 && (
+            <div className="workout-section">
+              <div 
+                className="workout-section-header"
+                onClick={() => setCardioWorkoutsCollapsed(!cardioWorkoutsCollapsed)}
+              >
+                <h4 className="workout-section-title">
+                  <span className="section-badge cardio"></span>
+                  Cardio Workouts ({cardioWorkouts.length})
+                </h4>
+                <span className={`section-toggle ${cardioWorkoutsCollapsed ? 'collapsed' : ''}`}>
+                  ▼
+                </span>
+              </div>
+              <div className={`workout-section-content ${cardioWorkoutsCollapsed ? 'collapsed' : ''}`}>
+                <div className="workouts-grid">
+                  {cardioWorkouts.map((workout) => (
+                    <WorkoutDetails key={workout._id} workout={workout} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {weightsWorkouts.length === 0 && cardioWorkouts.length === 0 && (
+            <p>No workouts found for this date.</p>
+          )}
+        </>
+      );
+    } else {
+      // Desktop view - all workouts displayed normally
+      return (
+        <div className="workouts-grid">
+          {groupedWorkouts[selectedDate].map((workout) => (
+            <WorkoutDetails key={workout._id} workout={workout} />
+          ))}
+        </div>
+      );
+    }
+  };
+
   return (
     <div className="dashboard-page">
       {showProgressView ? (
@@ -384,11 +496,7 @@ const Dashboard = () => {
 
               {selectedDate && (
                 <div className="selected-date-workouts">
-                  <div className="workouts-grid">
-                    {groupedWorkouts[selectedDate]?.map((workout) => (
-                      <WorkoutDetails key={workout._id} workout={workout} />
-                    ))}
-                  </div>
+                  {renderWorkoutSections()}
                 </div>
               )}
             </div>
