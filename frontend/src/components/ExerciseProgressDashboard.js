@@ -1,5 +1,5 @@
 // components/ExerciseProgressDashboard.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useWorkoutConext } from '../hooks/useWorkoutsContext';
 import { getWorkoutExercises } from '../utils/exerciseService';
@@ -15,9 +15,9 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory, p
   const [chartHeight, setChartHeight] = useState(window.innerWidth > 400 ? 400 : 250);
   const [workoutType, setWorkoutType] = useState(preSelectedType || 'weights');
 
-  // Set weight categories and cardio categories
-  const weightCategories = ['Legs', 'Chest', 'Back', 'Shoulders', 'Arms', 'Core'];
-  const cardioCategories = ['Running', 'Cycling', 'Swimming', 'Rowing', 'Elliptical'];
+  // Memoize category arrays to prevent recreating on every render
+  const weightCategories = useMemo(() => ['Legs', 'Chest', 'Back', 'Shoulders', 'Arms', 'Core'], []);
+  const cardioCategories = useMemo(() => ['Running', 'Cycling', 'Swimming', 'Rowing', 'Elliptical'], []);
 
   // Handle window resize for responsive charts
   useEffect(() => {
@@ -42,7 +42,7 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory, p
         setSelectedMetric('weight');
       }
     }
-  }, [preSelectedType,selectedMetric]);
+  }, [preSelectedType, selectedMetric]);
 
   // Fetch exercise categories and options when component mounts
   useEffect(() => {
@@ -82,7 +82,7 @@ const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory, p
     };
 
     fetchExercises();
-  }, [workoutType, selectedCategory,cardioCategories, weightCategories]);
+  }, [workoutType, selectedCategory, weightCategories, cardioCategories]);
 
   // Handle pre-selected category from URL params
   useEffect(() => {
