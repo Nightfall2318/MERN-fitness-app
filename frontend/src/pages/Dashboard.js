@@ -1,10 +1,10 @@
-// pages/Dashboard.js - Updated with mobile view fixes
+// pages/Dashboard.js - Updated with collapsible legends
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import ExerciseProgressDashboard from '../components/ExerciseProgressDashboard';
 import WorkoutDetails from '../components/workoutDetails';
 import { useWorkoutConext } from '../hooks/useWorkoutsContext';
-import  '../styles/pages/Dashboard.css'
+import '../styles/pages/Dashboard.css';
 
 const Dashboard = () => {
   const { workouts, dispatch } = useWorkoutConext();
@@ -21,6 +21,10 @@ const Dashboard = () => {
   const [preSelectedCategory, setPreSelectedCategory] = useState(null);
   const [preSelectedType, setPreSelectedType] = useState(null);
   const [showProgressView, setShowProgressView] = useState(false);
+  
+  // New states for collapsible legends
+  const [weightsLegendCollapsed, setWeightsLegendCollapsed] = useState(false);
+  const [cardioLegendCollapsed, setCardioLegendCollapsed] = useState(false);
 
   // Category colors for both workout types
   const categoryColors = {
@@ -221,41 +225,73 @@ const Dashboard = () => {
     setPreSelectedType(null);
   };
 
-  // Create an improved legend for the category colors with separate sections
-  const CategoryLegend = () => {
+  // Updated collapsible legend component
+  const CollapsibleLegend = () => {
     // Separate weight and cardio categories for better organization
     const weightCategories = ['Legs', 'Chest', 'Back', 'Shoulders', 'Arms', 'Core'];
     const cardioCategories = ['Running', 'Cycling', 'Swimming', 'Rowing', 'Elliptical'];
     
     return (
       <div className="legend-container">
+        {/* Weights Legend Section */}
         <div className="legend-section">
-          <h4 className="legend-title">Weights</h4>
-          <div className="category-legend">
-            {weightCategories.map(category => (
-              <div key={category} className="legend-item">
-                <span 
-                  className="legend-color" 
-                  style={{ backgroundColor: categoryColors[category] }}
-                ></span>
-                <span>{category}</span>
-              </div>
-            ))}
+          <div 
+            className="legend-header" 
+            onClick={() => setWeightsLegendCollapsed(!weightsLegendCollapsed)}
+          >
+            <h4 className="legend-title">
+              Weights
+              <span className={`legend-summary ${weightsLegendCollapsed ? 'visible' : ''}`}>
+                (click to show legend)
+              </span>
+            </h4>
+            <span className={`legend-toggle ${weightsLegendCollapsed ? 'collapsed' : ''}`}>
+              ▼
+            </span>
+          </div>
+          <div className={`legend-content ${weightsLegendCollapsed ? 'collapsed' : ''}`}>
+            <div className="category-legend">
+              {weightCategories.map(category => (
+                <div key={category} className="legend-item">
+                  <span 
+                    className="legend-color" 
+                    style={{ backgroundColor: categoryColors[category] }}
+                  ></span>
+                  <span>{category}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         
+        {/* Cardio Legend Section */}
         <div className="legend-section">
-          <h4 className="legend-title">Cardio</h4>
-          <div className="category-legend">
-            {cardioCategories.map(category => (
-              <div key={category} className="legend-item">
-                <span 
-                  className="legend-color" 
-                  style={{ backgroundColor: categoryColors[category] }}
-                ></span>
-                <span>{category}</span>
-              </div>
-            ))}
+          <div 
+            className="legend-header"
+            onClick={() => setCardioLegendCollapsed(!cardioLegendCollapsed)}
+          >
+            <h4 className="legend-title">
+              Cardio
+              <span className={`legend-summary ${cardioLegendCollapsed ? 'visible' : ''}`}>
+                (click to show legend)
+              </span>
+            </h4>
+            <span className={`legend-toggle ${cardioLegendCollapsed ? 'collapsed' : ''}`}>
+              ▼
+            </span>
+          </div>
+          <div className={`legend-content ${cardioLegendCollapsed ? 'collapsed' : ''}`}>
+            <div className="category-legend">
+              {cardioCategories.map(category => (
+                <div key={category} className="legend-item">
+                  <span 
+                    className="legend-color" 
+                    style={{ backgroundColor: categoryColors[category] }}
+                  ></span>
+                  <span>{category}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -286,7 +322,7 @@ const Dashboard = () => {
           
           <div className="dashboard-layout">
             <div className="date-nav"> 
-              <CategoryLegend />
+              <CollapsibleLegend />
               <h2>Workout Dates</h2>
              
               <div className="date-list">
