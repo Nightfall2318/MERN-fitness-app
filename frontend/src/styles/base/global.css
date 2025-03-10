@@ -1,0 +1,106 @@
+/* global.css - Global resets and base styles */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    width: 100%;
+    overflow-x: hidden;
+  }
+  
+  body {
+    background: var(--background-color);
+    font-family: 'Poppins';
+    padding-top: 70px;
+  }
+  
+  .pages {
+    max-width: 1400px;
+    padding: 20px;
+    margin: 0 auto;
+  }
+  
+  /* Form Elements (shared across components) */
+  label, input, select {
+    display: block;
+  }
+  
+  input, select {
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  form button {
+    background: var(--primary);
+    border: 0;
+    color: #fff;
+    padding: 10px;
+    font-family: "Poppins";
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  div.error {
+    padding: 10px;
+    background-color: #ffefff;
+    border: 1px solid var(--error);
+    color: var(--error);
+    border-radius: 4px;
+    margin: 20px 0;
+  }
+  
+  input.error {
+    border: 1px solid var(--error);
+  }
+  
+  select.error {
+    border: 1px solid var(--error) !important;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-input,
+  .form-select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  /* Modal (used in multiple components) */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+  }
+  
+  /* Responsive container */
+  .responsive-container {
+    width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
+  }

@@ -1,0 +1,168 @@
+/* WorkoutForm.css - Styles for WorkoutForm.js component */
+
+.create-workout-container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  /* Workout type selector */
+  .workout-type-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+  
+  .create-workout-container .workout-type-btn {
+    flex: 1;
+    padding: 10px;
+    background-color: #fff !important;
+    border: 1px solid #ddd !important;
+    border-radius: 6px !important;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #333 !important;
+    text-align: center;
+  }
+  
+  .create-workout-container .workout-type-btn.active {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: white !important;
+  }
+  
+  .create-workout-container .workout-type-btn:hover:not(.active) {
+    background-color: #f5f5f5 !important;
+  }
+  
+  /* Sets controls */
+  .sets-container {
+    margin-top: 20px;
+  }
+  
+  .input-with-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .input-with-buttons label {
+    margin-right: 5px;
+    white-space: nowrap;
+  }
+  
+  .add-set-btn-main {
+    margin-bottom: 10px;
+    margin-right: 20px;
+    background: var(--primary);
+    border: 0;
+    color: #fff;
+    padding: 10px;
+    font-family: "Poppins";
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .increment-btn {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--primary);
+    background-color: white;
+    color: var(--primary);
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .increment-btn:hover {
+    background-color: var(--primary);
+    color: white;
+    transform: scale(1.1);
+  }
+  
+  .increment-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+  
+  /* Custom exercise controls */
+  .custom-exercise-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px; 
+  }
+  
+  .add-custom-exercise-btn,
+  .cancel-custom-exercise-btn {
+    padding: 8px 12px;
+    border-radius: 4px;
+  }
+  
+  .add-custom-exercise-btn {
+    background-color: #10b981;
+    color: white;
+    border: none;
+  }
+  
+  .cancel-custom-exercise-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+  }
+  
+  .add-custom-exercise-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  /* Cardio form styling */
+  .cardio-container {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+  
+  .distance-input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .distance-input {
+    flex-grow: 1;
+  }
+  
+  .distance-unit {
+    width: 70px;
+    flex-shrink: 0;
+  }
+  
+  /* Web vs mobile display */
+  .workout-form-web {
+    display: block;
+  }
+  
+  @media (max-width: 768px) {
+    .workout-form-web {
+      display: none;
+    }
+  
+    .open-modal-btn {
+      display: block;
+      margin-bottom: 1rem;
+    }
+  }

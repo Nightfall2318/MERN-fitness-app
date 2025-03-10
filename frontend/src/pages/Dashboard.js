@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import ExerciseProgressDashboard from '../components/ExerciseProgressDashboard';
 import WorkoutDetails from '../components/workoutDetails';
 import { useWorkoutConext } from '../hooks/useWorkoutsContext';
+import  '../styles/pages/Dashboard.css'
 
 const Dashboard = () => {
   const { workouts, dispatch } = useWorkoutConext();

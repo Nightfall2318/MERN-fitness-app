@@ -1,0 +1,235 @@
+/* WorkoutDetails.css - Styles for WorkoutDetails.js component */
+
+.workout-details-container {
+    background: #fff;
+    border-radius: 4px;
+    margin: 20px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+  }
+  
+  .workout-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  
+  .workout-title-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .category-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  
+  .workout-title {
+    margin: 0;
+    font-size: 1.2em;
+    color: var(--primary);
+    cursor: pointer;
+  }
+  
+  .workout-title:hover {
+    color: #1d6f64;
+  }
+  
+  .workout-title:hover::after {
+    content: '📊';
+    font-size: 0.8em;
+    position: absolute;
+    top: 0;
+    margin-left: 5px;
+  }
+  
+  .workout-title::after {
+    content: 'View progress';
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s;
+  }
+  
+  .workout-title:hover::after {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .workout-details-container p {
+    margin: 0;
+    font-size: 0.9em;
+    color: #555;
+  }
+  
+  .workout-details-container span.material-symbols-outlined {
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    background-color: #f1f1f1;
+    padding: 6px;
+    border-radius: 50%;
+    color: #333;
+  }
+  
+  .delete-icon {
+    position: static;
+    cursor: pointer;
+    background-color: #f1f1f1;
+    padding: 6px;
+    border-radius: 50%;
+    color: #333;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .viewProgressBtn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  
+  .viewProgressBtn:hover {
+    background: var(--primary);
+  }
+  
+  .viewProgressBtn::before {
+    content: '📈';
+    margin-right: 5px;
+  }
+  
+  .workout-details-container .editBtn {
+    background: var(--primary);
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .workout-details-container .cancelBtn {
+    background: var(--error);
+    border: 0;
+    color: #fff;
+    padding: 10px;
+    font-family: "Poppins";
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 20px;
+  }
+  
+  .workout-details-container .saveBtn {
+    background: var(--primary);
+    border: 0;
+    color: #fff;
+    padding: 10px;
+    font-family: "Poppins";
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 20px;
+  }
+  
+  /* Set inputs for workout details */
+  .set-input-group {
+    width: 100%;
+    display: block;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  
+  .set-input-group span {
+    font-weight: bold;
+  }
+  
+  .set-input {
+    flex-grow: 1;
+    width: 70px;
+    text-align: center;
+    margin: 0 10px;
+  }
+  
+  /* Workout type badges */
+  .workout-type-badge {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 12px;
+    margin-left: 8px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  .workout-type-badge.weights {
+    background-color: #e6f7ff;
+    color: #0077cc;
+  }
+  
+  .workout-type-badge.cardio {
+    background-color: #fff2e6;
+    color: #ff7700;
+  }
+  
+  /* Cardio summary styles */
+  .cardio-summary {
+    background-color: #f5f9ff;
+    padding: 12px;
+    border-radius: 6px;
+    margin: 10px 0;
+    border-left: 4px solid var(--primary);
+  }
+  
+  /* Sets-related buttons */
+  .add-set-btn {
+    margin-bottom: 10px;
+    background: var(--primary);
+    border: 0;
+    color: #fff;
+    padding: 10px;
+    font-family: "Poppins";
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .remove-set-btn {
+    background: var(--error);
+    margin-bottom: 10px;
+    border: 0;
+    color: #fff;
+    padding: 10px;
+    font-family: "Poppins";
+    border-radius: 4px;
+    cursor: pointer;
+  }

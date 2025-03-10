@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWorkoutConext } from "../hooks/useWorkoutsContext";
 import { getWorkoutExercises } from "../utils/exerciseService";
+import '../styles/components/WorkoutDetails.css';
 
 const WorkoutDetails = ({ workout }) => {
   const { dispatch } = useWorkoutConext();

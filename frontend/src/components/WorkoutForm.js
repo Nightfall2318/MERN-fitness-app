@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useWorkoutConext } from "../hooks/useWorkoutsContext";
 import { getWorkoutExercises, addExerciseToCategory } from "../utils/exerciseService";
+import '../styles/components/WorkoutForm.css';
 
 const WorkoutForm = () => {
    const { dispatch } = useWorkoutConext();

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useWorkoutConext } from '../hooks/useWorkoutsContext';
 import { getWorkoutExercises } from '../utils/exerciseService';
+import '../styles/components/ExcerciseProgressDashboard.css';
 
 const ExerciseProgressDashboard = ({ preSelectedExercise, preSelectedCategory, preSelectedType }) => {
   const { workouts } = useWorkoutConext();

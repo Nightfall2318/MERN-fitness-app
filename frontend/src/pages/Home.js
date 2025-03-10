@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWorkoutConext } from "../hooks/useWorkoutsContext";
 import WorkoutForm from '../components/WorkoutForm';
+import  '../styles/pages/Home.css'
 
 const Home = () => {
   const { workouts, dispatch } = useWorkoutConext();
