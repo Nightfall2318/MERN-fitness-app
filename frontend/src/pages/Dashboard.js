@@ -338,17 +338,6 @@ const Dashboard = () => {
   const getCardioWorkouts = (workouts) => {
     return workouts.filter(w => w.workoutType === 'cardio');
   };
-  
-  // Get counts for summary
-  const getWeightsWorkoutCount = () => {
-    if (!selectedDate || !groupedWorkouts[selectedDate]) return 0;
-    return getWeightsWorkouts(groupedWorkouts[selectedDate]).length;
-  };
-  
-  const getCardioWorkoutCount = () => {
-    if (!selectedDate || !groupedWorkouts[selectedDate]) return 0;
-    return getCardioWorkouts(groupedWorkouts[selectedDate]).length;
-  };
 
   // Render workout sections - either collapsible (mobile) or regular (desktop)
   const renderWorkoutSections = () => {
