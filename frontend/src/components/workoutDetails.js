@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWorkoutConext } from "../hooks/useWorkoutsContext";
-import { getWorkoutExercises } from "../utils/exerciseService";
+import { getWorkoutExercises, addExerciseToCategory } from "../utils/exerciseService";
 import '../styles/components/WorkoutDetails.css';
 
 const WorkoutDetails = ({ workout }) => {
@@ -14,6 +14,11 @@ const WorkoutDetails = ({ workout }) => {
   const [workoutType] = useState(workout.workoutType || 'weights');
   const [exercises, setExercises] = useState({});
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
+  // Custom exercise states
+  const [isCustomExercise, setIsCustomExercise] = useState(false);
+  const [newExercise, setNewExercise] = useState('');
   
   // Format date for the date input (YYYY-MM-DD)
   const formatDateForInput = (dateString) => {
@@ -63,10 +68,43 @@ const WorkoutDetails = ({ workout }) => {
     'Rowing': '#FF9900', // Orange
     'Elliptical': '#9933FF', // Purple
   };
+  
+  // Handle category change (reset title and custom exercise state)
+  const handleCategoryChange = (selectedCategory) => {
+    setCategory(selectedCategory);
+    setTitle('');
+    setIsCustomExercise(false);
+    setNewExercise('');
+  };
+  
+  // Handle adding new custom exercise
+  const handleAddNewExercise = async () => {
+    if (newExercise.trim() && category) {
+      try {
+        setError(null);
+        // Use the function that calls the API
+        const updatedExercises = await addExerciseToCategory(category, newExercise.trim());
+        
+        // Update local state with the new exercises
+        setExercises(updatedExercises);
+        
+        // Set the newly added exercise as the selected title
+        setTitle(newExercise.trim());
+        
+        // Reset the new exercise input
+        setNewExercise('');
+        
+        // Exit custom exercise mode
+        setIsCustomExercise(false);
+      } catch (error) {
+        setError(error.message || 'Failed to add exercise');
+      }
+    }
+  };
 
   // Fetch exercises when editing begins
   useEffect(() => {
-    if (isEditing && workoutType === 'weights') {
+    if (isEditing) {
       const fetchExercises = async () => {
         setLoading(true);
         try {
@@ -74,6 +112,7 @@ const WorkoutDetails = ({ workout }) => {
           setExercises(data);
         } catch (error) {
           console.error('Failed to load exercises:', error);
+          setError('Failed to load exercises. Please try again later.');
         } finally {
           setLoading(false);
         }
@@ -81,7 +120,7 @@ const WorkoutDetails = ({ workout }) => {
 
       fetchExercises();
     }
-  }, [isEditing, workoutType]);
+  }, [isEditing]);
 
   const handleAddSet = () => {
     setSets([
@@ -117,7 +156,7 @@ const WorkoutDetails = ({ workout }) => {
     const updatedWorkout = { 
       title, 
       category, 
-      sets,
+      workoutType,
       createdAt: updatedDate.toISOString()  // Use the updated date
     };
 
@@ -142,6 +181,9 @@ const WorkoutDetails = ({ workout }) => {
     if (response.ok) {
       dispatch({ type: "UPDATE_WORKOUT", payload: json });
       setIsEditing(false);
+      setError(null);
+    } else {
+      setError(json.error || 'Failed to update workout');
     }
   };
 
@@ -215,39 +257,10 @@ const WorkoutDetails = ({ workout }) => {
       return (
         <>
           <div className="form-group">
-            <label>Exercise:</label>
-            {loading ? (
-              <div className="loading">Loading exercises...</div>
-            ) : (
-              <select 
-                value={title} 
-                onChange={(e) => setTitle(e.target.value)}
-                className="form-select"
-              >
-                {category && exercises[category] && 
-                  exercises[category].map((exercise) => (
-                    <option key={exercise} value={exercise}>
-                      {exercise}
-                    </option>
-                  ))
-                }
-                {/* Add current exercise if not in the list */}
-                {category && exercises[category] && 
-                  !exercises[category].includes(title) && (
-                    <option key={title} value={title}>
-                      {title}
-                    </option>
-                  )
-                }
-              </select>
-            )}
-          </div>
-
-          <div className="form-group">
             <label>Category:</label>
             <select
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => handleCategoryChange(e.target.value)}
               className="form-select"
             >
               <option value="Legs">Legs</option>
@@ -257,6 +270,76 @@ const WorkoutDetails = ({ workout }) => {
               <option value="Arms">Arms</option>
               <option value="Core">Core</option>
             </select>
+          </div>
+          
+          <div className="form-group">
+            <label>Exercise:</label>
+            {loading ? (
+              <div className="loading">Loading exercises...</div>
+            ) : (
+              !isCustomExercise ? (
+                <select 
+                  value={title} 
+                  onChange={(e) => {
+                    if (e.target.value === 'custom') {
+                      setIsCustomExercise(true);
+                      setTitle('');
+                    } else {
+                      setTitle(e.target.value);
+                    }
+                  }}
+                  className="form-select"
+                >
+                  <option value="">Select Exercise</option>
+                  <option value="custom">Add Custom Exercise</option>
+                  {category && exercises[category] && 
+                    exercises[category].map((exercise) => (
+                      <option key={exercise} value={exercise}>
+                        {exercise}
+                      </option>
+                    ))
+                  }
+                  {/* Add current exercise if not in the list */}
+                  {category && exercises[category] && 
+                    !exercises[category].includes(title) && title && title !== 'custom' && (
+                      <option key={title} value={title}>
+                        {title}
+                      </option>
+                    )
+                  }
+                </select>
+              ) : (
+                <div className="custom-exercise-input">
+                  <input
+                    type="text"
+                    placeholder="Enter custom exercise"
+                    value={newExercise}
+                    onChange={(e) => setNewExercise(e.target.value)}
+                    required
+                  />
+                  <div className="custom-exercise-actions">
+                    <button 
+                      type="button" 
+                      onClick={handleAddNewExercise}
+                      className="add-custom-exercise-btn"
+                      disabled={!newExercise.trim()}
+                    >
+                      Add Exercise
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        setIsCustomExercise(false);
+                        setNewExercise('');
+                      }}
+                      className="cancel-custom-exercise-btn"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )
+            )}
           </div>
           
           <div className="form-group">
@@ -310,20 +393,10 @@ const WorkoutDetails = ({ workout }) => {
       return (
         <>
           <div className="form-group">
-            <label>Activity Name:</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="form-input"
-            />
-          </div>
-
-          <div className="form-group">
             <label>Category:</label>
             <select
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => handleCategoryChange(e.target.value)}
               className="form-select"
             >
               <option value="Running">Running</option>
@@ -332,6 +405,82 @@ const WorkoutDetails = ({ workout }) => {
               <option value="Rowing">Rowing</option>
               <option value="Elliptical">Elliptical</option>
             </select>
+          </div>
+
+          <div className="form-group">
+            <label>Activity Name:</label>
+            {!isCustomExercise ? (
+              <select
+                value={title}
+                onChange={(e) => {
+                  if (e.target.value === 'custom') {
+                    setIsCustomExercise(true);
+                    setTitle('');
+                  } else {
+                    setTitle(e.target.value);
+                  }
+                }}
+                className="form-select"
+              >
+                <option value="">Select {category} Activity</option>
+                <option value="custom">Add Custom Activity</option>
+                {category && exercises[category] && 
+                  exercises[category].map((activity) => (
+                    <option key={activity} value={activity}>
+                      {activity}
+                    </option>
+                  ))
+                }
+                {/* Add current activity if not in the list */}
+                {category && exercises[category] && 
+                  !exercises[category].includes(title) && title && title !== 'custom' && (
+                    <option key={title} value={title}>
+                      {title}
+                    </option>
+                  )
+                }
+              </select>
+            ) : (
+              <div className="custom-exercise-input">
+                <input
+                  type="text"
+                  placeholder="Enter custom activity"
+                  value={newExercise}
+                  onChange={(e) => setNewExercise(e.target.value)}
+                  required
+                />
+                <div className="custom-exercise-actions">
+                  <button 
+                    type="button" 
+                    onClick={handleAddNewExercise}
+                    className="add-custom-exercise-btn"
+                    disabled={!newExercise.trim()}
+                  >
+                    Add Activity
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      setIsCustomExercise(false);
+                      setNewExercise('');
+                    }}
+                    className="cancel-custom-exercise-btn"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className="form-group">
+            <label>Date:</label>
+            <input
+              type="date"
+              value={workoutDate}
+              onChange={(e) => setWorkoutDate(e.target.value)}
+              className="form-input"
+            />
           </div>
 
           <div className="cardio-container">
@@ -381,8 +530,29 @@ const WorkoutDetails = ({ workout }) => {
           {renderEditForm()}
           <div className="form-action-buttons">
             <button className="saveBtn" onClick={handleEdit}>Save</button>
-            <button className="cancelBtn" onClick={() => setIsEditing(false)}>Cancel</button>
+            <button className="cancelBtn" onClick={() => {
+              setIsEditing(false);
+              setIsCustomExercise(false);
+              setError(null);
+              // Reset to original values
+              setTitle(workout.title);
+              setCategory(workout.category);
+              setWorkoutDate(formatDateForInput(workout.createdAt));
+              
+              if (workout.workoutType === 'cardio') {
+                setDuration(workout.cardio?.duration || '');
+                setDistance(workout.cardio?.distance || '');
+                setDistanceUnit(workout.cardio?.distanceUnit || 'km');
+              } else {
+                setSets(Array.isArray(workout.sets) ? workout.sets : [{
+                  setNumber: 1, 
+                  reps: workout.reps || '', 
+                  weight: workout.weight || ''
+                }]);
+              }
+            }}>Cancel</button>
           </div>
+          {error && <div className="error">{error}</div>}
         </div>
       ) : (
         <>

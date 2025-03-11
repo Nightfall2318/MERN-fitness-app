@@ -3,7 +3,7 @@ import { useWorkoutConext } from "../hooks/useWorkoutsContext";
 import { getWorkoutExercises, addExerciseToCategory } from "../utils/exerciseService";
 import '../styles/components/WorkoutForm.css';
 
-const WorkoutForm = () => {
+const WorkoutForm = ({ initialDate, onWorkoutAdded }) => {
    const { dispatch } = useWorkoutConext();
    const [title, setTitle] = useState('');
    const [category, setCategory] = useState('');
@@ -23,6 +23,15 @@ const WorkoutForm = () => {
    const [newExercise, setNewExercise] = useState('');
    const [exercises, setExercises] = useState({});
    const [loading, setLoading] = useState(true);
+   
+   // State for workout date
+   const [workoutDate, setWorkoutDate] = useState(() => {
+     // Format date as YYYY-MM-DD for input field
+     if (initialDate) {
+       return initialDate.toISOString().split('T')[0];
+     }
+     return new Date().toISOString().split('T')[0];
+   });
 
    // Fetch exercises when component mounts
    useEffect(() => {
@@ -136,7 +145,8 @@ const WorkoutForm = () => {
         let workoutData = {
             title,
             category,
-            workoutType
+            workoutType,
+            createdAt: new Date(workoutDate).toISOString() // Use the selected date
         };
 
         if (workoutType === 'weights') {
@@ -197,6 +207,11 @@ const WorkoutForm = () => {
                 setError(null);
                 setEmptyFields([]);
                 dispatch({ type: 'CREATE_WORKOUT', payload: json });
+                
+                // Notify parent component if callback provided
+                if (onWorkoutAdded) {
+                    onWorkoutAdded();
+                }
             }
         } catch (error) {
             setError('Failed to submit workout. Please try again.');
@@ -385,6 +400,16 @@ const WorkoutForm = () => {
                 </div>
             </div>
 
+            <div className="form-group">
+                <label>Date:</label>
+                <input
+                    type="date"
+                    value={workoutDate}
+                    onChange={(e) => setWorkoutDate(e.target.value)}
+                    className="form-input"
+                />
+            </div>
+
             <label>Category:</label>
             <select
                 onChange={(e) => handleCategoryChange(e.target.value)}
@@ -456,19 +481,59 @@ const WorkoutForm = () => {
             {workoutType === 'cardio' && category && (
                 <div className="exercise-selection">
                     <label>Activity Name:</label>
-                    <select
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        className={emptyFields.includes("title") ? "error" : ""}
-                        required
-                    >
-                        <option value="">Select {category} Activity</option>
-                        {exercises[category] && exercises[category].map((activity) => (
-                            <option key={activity} value={activity}>
-                                {activity}
-                            </option>
-                        ))}
-                    </select>
+                    {!isCustomExercise ? (
+                        <select
+                            value={title}
+                            onChange={(e) => {
+                                if (e.target.value === 'custom') {
+                                    setIsCustomExercise(true);
+                                    setTitle('');
+                                } else {
+                                    setTitle(e.target.value);
+                                }
+                            }}
+                            className={emptyFields.includes("title") ? "error" : ""}
+                            required
+                        >
+                            <option value="">Select {category} Activity</option>
+                            <option value="custom">Add Custom Activity</option>
+                            {exercises[category] && exercises[category].map((activity) => (
+                                <option key={activity} value={activity}>
+                                    {activity}
+                                </option>
+                            ))}
+                        </select>
+                    ) : (
+                        <div className="custom-exercise-input">
+                            <input
+                                type="text"
+                                placeholder="Enter custom activity"
+                                value={newExercise}
+                                onChange={(e) => setNewExercise(e.target.value)}
+                                required
+                            />
+                            <div className="custom-exercise-actions">
+                                <button 
+                                    type="button" 
+                                    onClick={handleAddNewExercise}
+                                    className="add-custom-exercise-btn"
+                                    disabled={!newExercise.trim()}
+                                >
+                                    Add Activity
+                                </button>
+                                <button 
+                                    type="button" 
+                                    onClick={() => {
+                                        setIsCustomExercise(false);
+                                        setNewExercise('');
+                                    }}
+                                    className="cancel-custom-exercise-btn"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
 

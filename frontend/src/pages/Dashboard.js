@@ -1,8 +1,9 @@
-// pages/Dashboard.js - Updated with collapsible workout sections
+// pages/Dashboard.js - Updated with add workout button
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import ExerciseProgressDashboard from '../components/ExerciseProgressDashboard';
 import WorkoutDetails from '../components/workoutDetails';
+import WorkoutForm from '../components/WorkoutForm';
 import { useWorkoutConext } from '../hooks/useWorkoutsContext';
 import '../styles/pages/Dashboard.css';
 
@@ -30,6 +31,9 @@ const Dashboard = () => {
   const [weightsWorkoutsCollapsed, setWeightsWorkoutsCollapsed] = useState(false);
   const [cardioWorkoutsCollapsed, setCardioWorkoutsCollapsed] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
+  
+  // New state for add workout modal
+  const [isAddWorkoutModalOpen, setIsAddWorkoutModalOpen] = useState(false);
 
   // Category colors for both workout types
   const categoryColors = {
@@ -132,6 +136,11 @@ const Dashboard = () => {
       }
     }
   }, [workouts, selectedDate]);
+  
+  // Handle workout creation success
+  const handleWorkoutAdded = () => {
+    setIsAddWorkoutModalOpen(false);
+  };
 
   const CalendarPicker = () => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -330,6 +339,17 @@ const Dashboard = () => {
     return workouts.filter(w => w.workoutType === 'cardio');
   };
   
+  // Get counts for summary
+  const getWeightsWorkoutCount = () => {
+    if (!selectedDate || !groupedWorkouts[selectedDate]) return 0;
+    return getWeightsWorkouts(groupedWorkouts[selectedDate]).length;
+  };
+  
+  const getCardioWorkoutCount = () => {
+    if (!selectedDate || !groupedWorkouts[selectedDate]) return 0;
+    return getCardioWorkouts(groupedWorkouts[selectedDate]).length;
+  };
+
   // Render workout sections - either collapsible (mobile) or regular (desktop)
   const renderWorkoutSections = () => {
     if (!selectedDate || !groupedWorkouts[selectedDate]) {
@@ -409,6 +429,25 @@ const Dashboard = () => {
       );
     }
   };
+  
+  // Format the selected date for display in a user-friendly format
+  const formatSelectedDateForDisplay = () => {
+    if (!selectedDate) return '';
+    
+    const date = new Date(selectedDate);
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+  
+  // Set the initial date for new workouts to the selected date
+  const getInitialWorkoutDate = () => {
+    if (!selectedDate) return new Date();
+    return new Date(selectedDate);
+  };
 
   return (
     <div className="dashboard-page">
@@ -485,14 +524,17 @@ const Dashboard = () => {
             )}
 
             <div className="workout-content">
-              <h3>
-                Workouts for {selectedDate && new Date(selectedDate).toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  month: 'long',
-                  day: 'numeric',
-                  year: 'numeric',
-                })}
-              </h3>
+              <div className="workout-content-header">
+                <h3>Workouts for {formatSelectedDateForDisplay()}</h3>
+                <button 
+                  className="add-workout-btn"
+                  onClick={() => setIsAddWorkoutModalOpen(true)}
+                  aria-label="Add new workout"
+                  title="Add new workout"
+                >
+                  <span className="add-icon">+</span>
+                </button>
+              </div>
 
               {selectedDate && (
                 <div className="selected-date-workouts">
@@ -501,6 +543,27 @@ const Dashboard = () => {
               )}
             </div>
           </div>
+          
+          {/* Add Workout Modal */}
+          {isAddWorkoutModalOpen && (
+            <div className="modal-overlay">
+              <div className="modal-content workout-modal">
+                <button
+                  className="close-modal-btn"
+                  onClick={() => setIsAddWorkoutModalOpen(false)}
+                >
+                  ✖
+                </button>
+                <h3>Add New Workout</h3>
+                <div className="workout-form-wrapper">
+                  <WorkoutForm 
+                    initialDate={getInitialWorkoutDate()}
+                    onWorkoutAdded={handleWorkoutAdded}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

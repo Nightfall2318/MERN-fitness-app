@@ -25,7 +25,7 @@ const getSingleWorkout = async (req, res) => {
 };
 
 const createWorkout = async (req, res) => {
-    const { title, category, workoutType, sets, cardio } = req.body;
+    const { title, category, workoutType, sets, cardio, createdAt } = req.body;
 
     let emptyFields = [];
 
@@ -76,6 +76,11 @@ const createWorkout = async (req, res) => {
         } else if (workoutType === 'cardio') {
             workoutData.cardio = cardio;
         }
+        
+        // Add custom date if provided
+        if (createdAt) {
+            workoutData.createdAt = new Date(createdAt);
+        }
 
         const workout = await Workout.create(workoutData);
         res.status(200).json(workout);
@@ -109,7 +114,7 @@ const updateWorkout = async (req, res) => {
         return res.status(404).json({ error: 'No such workout' });
     }
 
-    const { title, category, workoutType, sets, cardio } = req.body;
+    const { title, category, workoutType, sets, cardio, createdAt } = req.body;
 
     let emptyFields = [];
     
@@ -132,6 +137,7 @@ const updateWorkout = async (req, res) => {
     }
 
     try {
+        // Build the update data
         const workoutData = { 
             title, 
             category,
@@ -143,6 +149,11 @@ const updateWorkout = async (req, res) => {
             workoutData.sets = sets;
         } else if (workoutType === 'cardio') {
             workoutData.cardio = cardio;
+        }
+        
+        // Add custom date if provided
+        if (createdAt) {
+            workoutData.createdAt = new Date(createdAt);
         }
 
         const workout = await Workout.findByIdAndUpdate(
