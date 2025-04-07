@@ -4,7 +4,7 @@ This project is a full-stack application that allows users to enter a workout re
 
 ## Live Application
 
-You can access the live application here: [MERN-fitness-app](mern-fitness-app-production-b2ec.up.railway.app)
+You can access the live application here: [MERN-fitness-app](https://mern-fitness-app-production-b2ec.up.railway.app/)
 
 ## Project Structure
 
