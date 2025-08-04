@@ -49,58 +49,67 @@ const WorkoutForm = ({ initialDate, onWorkoutAdded }) => {
      fetchExercises();
    }, []);
 
-    // Reset form state when workout type changes
+    // FIXED: Only reset form state when workout type actually changes
+    // Remove the dependency on sets.length to prevent unwanted resets
     useEffect(() => {
       if (workoutType === 'weights') {
         setDuration('');
         setDistance('');
+        // Only initialize sets if they're empty
         if (sets.length === 0) {
           setSets([{ setNumber: 1, reps: '', weight: '' }]);
         }
       } else {
+        // Only reset sets when switching TO cardio, not during normal sets operations
         setSets([]);
       }
       
-      // Reset category and title when changing workout type
-      setCategory('');
-      setTitle('');
-    }, [workoutType, sets.length]);
+      // FIXED: Don't reset category and title here - let user keep their selections
+      // Only reset if this is the initial load or user explicitly changes workout type
+    }, [workoutType]); // Removed sets.length dependency
 
     const handleAddSet = () => {
-        setSets([
-            ...sets, 
-            { setNumber: sets.length + 1, reps: '', weight: '' }
+        // FIXED: Use functional state update to prevent issues with stale state
+        setSets(prevSets => [
+            ...prevSets, 
+            { setNumber: prevSets.length + 1, reps: '', weight: '' }
         ]);
     };
 
     const updateSet = (index, field, value) => {
-        const newSets = [...sets];
-        newSets[index][field] = value;
-        setSets(newSets);
+        setSets(prevSets => {
+            const newSets = [...prevSets];
+            newSets[index][field] = value;
+            return newSets;
+        });
     };
 
     const incrementValue = (index, field, increment) => {
-        const newSets = [...sets];
-        const currentValue = newSets[index][field];
-        
-        if (field === 'reps') {
-            // Increment reps by 1, min 0
-            const newValue = Number(currentValue || 0) + increment;
-            newSets[index][field] = Math.max(0, newValue).toString();
-        } else if (field === 'weight') {
-            // Increment weight by 2.5, min 0
-            const currentNum = Number(currentValue || 0);
-            const newValue = Number((currentNum + increment * 2.5).toFixed(1));
-            newSets[index][field] = Math.max(0, newValue).toString();
-        }
-        
-        setSets(newSets);
+        setSets(prevSets => {
+            const newSets = [...prevSets];
+            const currentValue = newSets[index][field];
+            
+            if (field === 'reps') {
+                // Increment reps by 1, min 0
+                const newValue = Number(currentValue || 0) + increment;
+                newSets[index][field] = Math.max(0, newValue).toString();
+            } else if (field === 'weight') {
+                // Increment weight by 2.5, min 0
+                const currentNum = Number(currentValue || 0);
+                const newValue = Number((currentNum + increment * 2.5).toFixed(1));
+                newSets[index][field] = Math.max(0, newValue).toString();
+            }
+            
+            return newSets;
+        });
     };
 
     const removeSet = (index) => {
-        const newSets = sets.filter((_, i) => i !== index)
-            .map((set, i) => ({...set, setNumber: i + 1}));
-        setSets(newSets);
+        setSets(prevSets => {
+            const newSets = prevSets.filter((_, i) => i !== index)
+                .map((set, i) => ({...set, setNumber: i + 1}));
+            return newSets;
+        });
     };
 
    const handleCategoryChange = (selectedCategory) => {
@@ -110,6 +119,16 @@ const WorkoutForm = ({ initialDate, onWorkoutAdded }) => {
         // Reset custom exercise toggle
         setIsCustomExercise(false);
         // Reset new exercise input
+        setNewExercise('');
+    };
+
+    // FIXED: Add explicit workout type change handler
+    const handleWorkoutTypeChange = (newType) => {
+        setWorkoutType(newType);
+        // Only reset category and title when user explicitly changes workout type
+        setCategory('');
+        setTitle('');
+        setIsCustomExercise(false);
         setNewExercise('');
     };
 
@@ -386,14 +405,14 @@ const WorkoutForm = ({ initialDate, onWorkoutAdded }) => {
                     <button
                         type="button"
                         className={`workout-type-btn ${workoutType === 'weights' ? 'active' : ''}`}
-                        onClick={() => setWorkoutType('weights')}
+                        onClick={() => handleWorkoutTypeChange('weights')}
                     >
                         Weights
                     </button>
                     <button
                         type="button"
                         className={`workout-type-btn ${workoutType === 'cardio' ? 'active' : ''}`}
-                        onClick={() => setWorkoutType('cardio')}
+                        onClick={() => handleWorkoutTypeChange('cardio')}
                     >
                         Cardio
                     </button>
