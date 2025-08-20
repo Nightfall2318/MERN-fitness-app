@@ -12,7 +12,10 @@ const getExercises = async (req, res) => {
       if (!acc[exercise.category]) {
         acc[exercise.category] = [];
       }
-      acc[exercise.category].push(exercise.name);
+      acc[exercise.category].push({
+        name: exercise.name,
+        isBodyweight: exercise.isBodyweight
+      });
       return acc;
     }, {});
     
@@ -28,9 +31,12 @@ const getExercisesByCategory = async (req, res) => {
   
   try {
     const exercises = await Exercise.find({ category }).sort({ name: 1 });
-    const exerciseNames = exercises.map(exercise => exercise.name);
+    const exerciseData = exercises.map(exercise => ({
+      name: exercise.name,
+      isBodyweight: exercise.isBodyweight
+    }));
     
-    res.status(200).json(exerciseNames);
+    res.status(200).json(exerciseData);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -38,7 +44,7 @@ const getExercisesByCategory = async (req, res) => {
 
 // Add a new exercise
 const createExercise = async (req, res) => {
-  const { name, category } = req.body;
+  const { name, category, isBodyweight } = req.body;
   
   if (!name || !category) {
     return res.status(400).json({ error: 'Name and category are required' });
@@ -48,6 +54,7 @@ const createExercise = async (req, res) => {
     const exercise = await Exercise.create({
       name: name.trim(),
       category,
+      isBodyweight: isBodyweight || false,
       isDefault: false
     });
     
@@ -91,54 +98,115 @@ const deleteExercise = async (req, res) => {
 // Initialize the database with default exercises if they don't exist
 const initializeDefaultExercises = async (req, res) => {
   const DEFAULT_WORKOUT_EXERCISES = {
-
-    //weights 
+    // Weights exercises
     Legs: [
-      'Calf Raises', 'Deadlifts', 'Hack Squats', 'Leg Curls', 
-      'Leg Extensions', 'Leg Press', 'Lunges', 'Romanian Deadlifts', 
-      'Squats', 'Step-Ups'
+      { name: 'Calf Raises', isBodyweight: false },
+      { name: 'Deadlifts', isBodyweight: false },
+      { name: 'Hack Squats', isBodyweight: false },
+      { name: 'Leg Curls', isBodyweight: false },
+      { name: 'Leg Extensions', isBodyweight: false },
+      { name: 'Leg Press', isBodyweight: false },
+      { name: 'Lunges', isBodyweight: true },
+      { name: 'Romanian Deadlifts', isBodyweight: false },
+      { name: 'Squats', isBodyweight: true },
+      { name: 'Step-Ups', isBodyweight: true }
     ],
     Chest: [
-      'Bench Press', 'Cable Flyes', 'Chest Pullovers', 'Close Grip Bench Press',
-      'Decline Bench Press', 'Dips', 'Dumbbell Flyes', 'Incline Bench Press',
-      'Machine Chest Press', 'Push-Ups'
+      { name: 'Bench Press', isBodyweight: false },
+      { name: 'Cable Flyes', isBodyweight: false },
+      { name: 'Chest Pullovers', isBodyweight: false },
+      { name: 'Close Grip Bench Press', isBodyweight: false },
+      { name: 'Decline Bench Press', isBodyweight: false },
+      { name: 'Dips', isBodyweight: true },
+      { name: 'Dumbbell Flyes', isBodyweight: false },
+      { name: 'Incline Bench Press', isBodyweight: false },
+      { name: 'Machine Chest Press', isBodyweight: false },
+      { name: 'Push-Ups', isBodyweight: true }
     ],
     Back: [
-      'Bent Over Rows', 'Deadlifts', 'Face Pulls', 'Good Mornings',
-      'Hyperextensions', 'Lat Pulldowns', 'Pull-Ups', 'Seated Cable Rows',
-      'Single-Arm Dumbbell Rows', 'T-Bar Rows'
+      { name: 'Bent Over Rows', isBodyweight: false },
+      { name: 'Deadlifts', isBodyweight: false },
+      { name: 'Face Pulls', isBodyweight: false },
+      { name: 'Good Mornings', isBodyweight: false },
+      { name: 'Hyperextensions', isBodyweight: true },
+      { name: 'Lat Pulldowns', isBodyweight: false },
+      { name: 'Pull-Ups', isBodyweight: true },
+      { name: 'Seated Cable Rows', isBodyweight: false },
+      { name: 'Single-Arm Dumbbell Rows', isBodyweight: false },
+      { name: 'T-Bar Rows', isBodyweight: false }
     ],
     Shoulders: [
-      'Arnold Press', 'Cable Lateral Raises', 'Face Pulls', 'Front Raises',
-      'Lateral Raises', 'Military Press', 'Reverse Flyes', 'Shrugs',
-      'Shoulder Press', 'Upright Rows'
+      { name: 'Arnold Press', isBodyweight: false },
+      { name: 'Cable Lateral Raises', isBodyweight: false },
+      { name: 'Face Pulls', isBodyweight: false },
+      { name: 'Front Raises', isBodyweight: false },
+      { name: 'Lateral Raises', isBodyweight: false },
+      { name: 'Military Press', isBodyweight: false },
+      { name: 'Reverse Flyes', isBodyweight: false },
+      { name: 'Shrugs', isBodyweight: false },
+      { name: 'Shoulder Press', isBodyweight: false },
+      { name: 'Upright Rows', isBodyweight: false }
     ],
     Arms: [
-      'Bicep Curls', 'Cable Tricep Kickbacks', 'Concentration Curls', 'Hammer Curls',
-      'Overhead Tricep Extensions', 'Preacher Curls', 'Reverse Curls', 'Skull Crushers',
-      'Tricep Dips', 'Tricep Pushdowns'
+      { name: 'Bicep Curls', isBodyweight: false },
+      { name: 'Cable Tricep Kickbacks', isBodyweight: false },
+      { name: 'Concentration Curls', isBodyweight: false },
+      { name: 'Hammer Curls', isBodyweight: false },
+      { name: 'Overhead Tricep Extensions', isBodyweight: false },
+      { name: 'Preacher Curls', isBodyweight: false },
+      { name: 'Reverse Curls', isBodyweight: false },
+      { name: 'Skull Crushers', isBodyweight: false },
+      { name: 'Tricep Dips', isBodyweight: true },
+      { name: 'Tricep Pushdowns', isBodyweight: false }
     ],
     Core: [
-      'Ab Rollouts', 'Bicycle Crunches', 'Cable Crunches', 'Crunches',
-      'Dead Bugs', 'Leg Raises', 'Mountain Climbers', 'Planks',
-      'Russian Twists', 'Side Planks'
+      { name: 'Ab Rollouts', isBodyweight: true },
+      { name: 'Bicycle Crunches', isBodyweight: true },
+      { name: 'Cable Crunches', isBodyweight: false },
+      { name: 'Crunches', isBodyweight: true },
+      { name: 'Dead Bugs', isBodyweight: true },
+      { name: 'Leg Raises', isBodyweight: true },
+      { name: 'Mountain Climbers', isBodyweight: true },
+      { name: 'Planks', isBodyweight: true },
+      { name: 'Russian Twists', isBodyweight: true },
+      { name: 'Side Planks', isBodyweight: true }
     ],
 
-    //cardio 
+    // Cardio exercises - these don't use the isBodyweight field since they're cardio
     Running: [
-      '5K Run', 'Treadmill', 'Interval Running', 'Trail Running', 'Sprint Training'
+      { name: '5K Run', isBodyweight: null },
+      { name: 'Treadmill', isBodyweight: null },
+      { name: 'Interval Running', isBodyweight: null },
+      { name: 'Trail Running', isBodyweight: null },
+      { name: 'Sprint Training', isBodyweight: null }
     ],
     Cycling: [
-      'Road Cycling', 'Stationary Bike', 'Spin Class', 'Mountain Biking', 'Interval Cycling'
+      { name: 'Road Cycling', isBodyweight: null },
+      { name: 'Stationary Bike', isBodyweight: null },
+      { name: 'Spin Class', isBodyweight: null },
+      { name: 'Mountain Biking', isBodyweight: null },
+      { name: 'Interval Cycling', isBodyweight: null }
     ],
     Swimming: [
-      'Freestyle', 'Backstroke', 'Breaststroke', 'Butterfly', 'Mixed Swim'
+      { name: 'Freestyle', isBodyweight: null },
+      { name: 'Backstroke', isBodyweight: null },
+      { name: 'Breaststroke', isBodyweight: null },
+      { name: 'Butterfly', isBodyweight: null },
+      { name: 'Mixed Swim', isBodyweight: null }
     ],
     Rowing: [
-      'Rowing Machine', 'Outdoor Rowing', 'Interval Rowing', 'Endurance Row', 'Sprint Row'
+      { name: 'Rowing Machine', isBodyweight: null },
+      { name: 'Outdoor Rowing', isBodyweight: null },
+      { name: 'Interval Rowing', isBodyweight: null },
+      { name: 'Endurance Row', isBodyweight: null },
+      { name: 'Sprint Row', isBodyweight: null }
     ],
     Elliptical: [
-      'Standard Elliptical', 'Cross-Trainer', 'Interval Training', 'Reverse Stride', 'Hill Climb'
+      { name: 'Standard Elliptical', isBodyweight: null },
+      { name: 'Cross-Trainer', isBodyweight: null },
+      { name: 'Interval Training', isBodyweight: null },
+      { name: 'Reverse Stride', isBodyweight: null },
+      { name: 'Hill Climb', isBodyweight: null }
     ]
   };
 
@@ -150,8 +218,15 @@ const initializeDefaultExercises = async (req, res) => {
       for (const exercise of exercises) {
         operations.push({
           updateOne: {
-            filter: { name: exercise, category },
-            update: { $setOnInsert: { name: exercise, category, isDefault: true } },
+            filter: { name: exercise.name, category },
+            update: { 
+              $setOnInsert: { 
+                name: exercise.name, 
+                category, 
+                isBodyweight: exercise.isBodyweight,
+                isDefault: true 
+              } 
+            },
             upsert: true
           }
         });
