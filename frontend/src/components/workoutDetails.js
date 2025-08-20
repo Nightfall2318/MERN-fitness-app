@@ -109,6 +109,7 @@ const WorkoutDetails = ({ workout }) => {
         setLoading(true);
         try {
           const data = await getWorkoutExercises();
+          console.log('Exercise data in edit:', data);
           setExercises(data);
         } catch (error) {
           console.error('Failed to load exercises:', error);
@@ -153,10 +154,28 @@ const WorkoutDetails = ({ workout }) => {
       updatedDate.setSeconds(originalDate.getSeconds());
     }
 
+    // Find the selected exercise and get its isBodyweight property
+    const selectedExercise = exercises[category]?.find(ex => {
+      // Handle both old format (string) and new format (object)
+      if (typeof ex === 'string') {
+        return ex === title;
+      } else {
+        return ex.name === title;
+      }
+    });
+    
+    // If it's an object, get the isBodyweight property; otherwise default to false
+    const isBodyweight = (selectedExercise && typeof selectedExercise === 'object') ? 
+      selectedExercise.isBodyweight : false;
+
+    console.log('Edit - Selected exercise:', selectedExercise);
+    console.log('Edit - isBodyweight:', isBodyweight);
+
     const updatedWorkout = { 
       title, 
       category, 
       workoutType,
+      isBodyweight, // Add this field!
       createdAt: updatedDate.toISOString()  // Use the updated date
     };
 
@@ -293,20 +312,27 @@ const WorkoutDetails = ({ workout }) => {
                   <option value="">Select Exercise</option>
                   <option value="custom">Add Custom Exercise</option>
                   {category && exercises[category] && 
-                    exercises[category].map((exercise) => (
-                      <option key={exercise} value={exercise}>
-                        {exercise}
-                      </option>
-                    ))
+                    exercises[category].map((exercise) => {
+                      // Handle both old format (string) and new format (object)
+                      const exerciseName = typeof exercise === 'string' ? exercise : exercise.name;
+                      return (
+                        <option key={exerciseName} value={exerciseName}>
+                          {exerciseName}
+                        </option>
+                      );
+                    })
                   }
                   {/* Add current exercise if not in the list */}
-                  {category && exercises[category] && 
-                    !exercises[category].includes(title) && title && title !== 'custom' && (
+                  {category && exercises[category] && title && title !== 'custom' && (
+                    // Check if current title exists in the exercise list
+                    !exercises[category].some(ex => 
+                      typeof ex === 'string' ? ex === title : ex.name === title
+                    ) && (
                       <option key={title} value={title}>
                         {title}
                       </option>
                     )
-                  }
+                  )}
                 </select>
               ) : (
                 <div className="custom-exercise-input">
@@ -367,6 +393,8 @@ const WorkoutDetails = ({ workout }) => {
                   placeholder="Weight (kg)"
                   value={set.weight}
                   onChange={(e) => updateSet(index, 'weight', e.target.value)}
+                  min="0"
+                  step="0.1"
                 />
                 {sets.length > 1 && (
                   <button 
@@ -425,20 +453,27 @@ const WorkoutDetails = ({ workout }) => {
                 <option value="">Select {category} Activity</option>
                 <option value="custom">Add Custom Activity</option>
                 {category && exercises[category] && 
-                  exercises[category].map((activity) => (
-                    <option key={activity} value={activity}>
-                      {activity}
-                    </option>
-                  ))
+                  exercises[category].map((activity) => {
+                    // Handle both old format (string) and new format (object)
+                    const activityName = typeof activity === 'string' ? activity : activity.name;
+                    return (
+                      <option key={activityName} value={activityName}>
+                        {activityName}
+                      </option>
+                    );
+                  })
                 }
                 {/* Add current activity if not in the list */}
-                {category && exercises[category] && 
-                  !exercises[category].includes(title) && title && title !== 'custom' && (
+                {category && exercises[category] && title && title !== 'custom' && (
+                  // Check if current title exists in the activity list
+                  !exercises[category].some(ex => 
+                    typeof ex === 'string' ? ex === title : ex.name === title
+                  ) && (
                     <option key={title} value={title}>
                       {title}
                     </option>
                   )
-                }
+                )}
               </select>
             ) : (
               <div className="custom-exercise-input">

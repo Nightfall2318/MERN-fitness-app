@@ -14,6 +14,7 @@
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    order: 2; /* Push stats below on mobile */
   }
   
   .workout-stats {
@@ -65,6 +66,7 @@
   
   .workout-form-container {
     flex-shrink: 0;
+    order: 1; /* Put workout form on top on mobile */
   }
   
   /* Responsive layout */
@@ -76,10 +78,12 @@
   
     .welcome-section {
       flex: 3; 
+      order: 1; /* Reset order for desktop - stats go back to left */
     }
   
     .workout-form-container {
       flex: 2; 
       align-self: flex-start;
+      order: 2; /* Reset order for desktop - form goes to right */
     }
   }

@@ -169,24 +169,24 @@ const WorkoutForm = ({ initialDate, onWorkoutAdded }) => {
     setError(null);
     setEmptyFields([]);
 
-    const selectedExercise = exercises[category]?.find(
-      (ex) => ex.name === title
-    );
+    // Find the selected exercise and get its isBodyweight property
+    const selectedExercise = exercises[category]?.find(ex => ex.name === title);
     const isBodyweight = selectedExercise?.isBodyweight || false;
-
-    console.log(isBodyweight);
+    
+    console.log('Selected exercise:', selectedExercise);
+    console.log('isBodyweight:', isBodyweight);
 
     let workoutData = {
       title,
       category,
       workoutType,
-      isBodyweight, // Add this line!
-      createdAt: new Date(workoutDate).toISOString(),
+      isBodyweight, // This should now be correct!
+      createdAt: new Date(workoutDate).toISOString()
     };
 
     if (workoutType === "weights") {
-      // Validate sets for weights workout
-      const invalidSets = sets.some((set) => !set.reps || !set.weight);
+      // FIXED: Validate sets for weights workout - allow 0 weight
+      const invalidSets = sets.some(set => !set.reps || (set.weight === undefined || set.weight === null || set.weight === ''));
 
       if (invalidSets) {
         setError("Please fill in all set details");
@@ -416,6 +416,7 @@ const WorkoutForm = ({ initialDate, onWorkoutAdded }) => {
   return (
     <form className="create-workout-container" onSubmit={handleSubmit}>
       <h3>Add a new Workout</h3>
+      
       <div className="form-group">
         <label>Workout Type:</label>
         <div className="workout-type-selector">
@@ -439,6 +440,7 @@ const WorkoutForm = ({ initialDate, onWorkoutAdded }) => {
           </button>
         </div>
       </div>
+
       <div className="form-group">
         <label>Date:</label>
         <input
@@ -448,6 +450,7 @@ const WorkoutForm = ({ initialDate, onWorkoutAdded }) => {
           className="form-input"
         />
       </div>
+
       <label>Category:</label>
       <select
         onChange={(e) => handleCategoryChange(e.target.value)}
@@ -521,6 +524,7 @@ const WorkoutForm = ({ initialDate, onWorkoutAdded }) => {
           )}
         </div>
       )}
+
       {workoutType === "cardio" && category && (
         <div className="exercise-selection">
           <label>Activity Name:</label>
@@ -585,67 +589,10 @@ const WorkoutForm = ({ initialDate, onWorkoutAdded }) => {
           )}
         </div>
       )}
-      {workoutType === "cardio" && category && (
-        <div className="exercise-selection">
-          <label>Activity Name:</label>
-          {!isCustomExercise ? (
-            <select
-              value={title}
-              onChange={(e) => {
-                if (e.target.value === "custom") {
-                  setIsCustomExercise(true);
-                  setTitle("");
-                } else {
-                  setTitle(e.target.value);
-                }
-              }}
-              className={emptyFields.includes("title") ? "error" : ""}
-              required
-            >
-              <option value="">Select {category} Activity</option>
-              <option value="custom">Add Custom Activity</option>
-              {exercises[category] &&
-                exercises[category].map((activity) => (
-                  <option key={activity} value={activity}>
-                    {activity}
-                  </option>
-                ))}
-            </select>
-          ) : (
-            <div className="custom-exercise-input">
-              <input
-                type="text"
-                placeholder="Enter custom activity"
-                value={newExercise}
-                onChange={(e) => setNewExercise(e.target.value)}
-                required
-              />
-              <div className="custom-exercise-actions">
-                <button
-                  type="button"
-                  onClick={handleAddNewExercise}
-                  className="add-custom-exercise-btn"
-                  disabled={!newExercise.trim()}
-                >
-                  Add Activity
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsCustomExercise(false);
-                    setNewExercise("");
-                  }}
-                  className="cancel-custom-exercise-btn"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+
       {/* Render the appropriate input fields based on workout type */}
       {category && renderWorkoutInputs()}
+      
       <button type="submit">Save Exercise</button>
       {error && <div className="error">{error}</div>}
     </form>
