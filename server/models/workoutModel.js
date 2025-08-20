@@ -50,6 +50,10 @@ const workoutSchema = new Schema({
         default: 'weights',
         required: true
     },
+    isBodyweight: {
+        type: Boolean,
+        default: false
+    },
     // For weight training workouts
     sets: {
         type: [setSchema],

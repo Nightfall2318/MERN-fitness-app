@@ -25,24 +25,53 @@ const getSingleWorkout = async (req, res) => {
 };
 
 const createWorkout = async (req, res) => {
-    const { title, category, workoutType, sets, cardio, createdAt } = req.body;
+    const { title, category, workoutType, sets, cardio, createdAt, isBodyweight } = req.body;
 
     let emptyFields = [];
 
+    // Basic field validation
     if (!title) emptyFields.push('title');
     if (!category) emptyFields.push('category');
     if (!workoutType) emptyFields.push('workoutType');
 
     // Validate based on workout type
     if (workoutType === 'weights') {
-        if (!sets || sets.length === 0) emptyFields.push('sets');
-
-        // Validate each set for weights workout
-        if (sets) {
+        if (!sets || sets.length === 0) {
+            emptyFields.push('sets');
+        } else {
+            // Validate each set - use separate validation logic
+            let hasValidationErrors = false;
+            
             sets.forEach((set, index) => {
-                if (!set.reps || set.reps <= 0) emptyFields.push(`sets[${index}].reps`);
-                if (!set.weight || set.weight <= 0) emptyFields.push(`sets[${index}].weight`);
+                // Always validate reps
+                if (!set.reps || set.reps <= 0) {
+                    emptyFields.push(`sets[${index}].reps`);
+                    hasValidationErrors = true;
+                }
+                
+                // Weight validation - handle bodyweight vs weighted exercises
+                if (isBodyweight) {
+                    // For bodyweight exercises: weight must be present and >= 0 (0 is allowed)
+                    if (set.weight === undefined || set.weight === null || set.weight < 0) {
+                        emptyFields.push(`sets[${index}].weight`);
+                        hasValidationErrors = true;
+                    }
+                } else {
+                    // For weighted exercises: weight must be present and > 0 (0 is NOT allowed)
+                    if (set.weight === undefined || set.weight === null || set.weight <= 0) {
+                        emptyFields.push(`sets[${index}].weight`);
+                        hasValidationErrors = true;
+                    }
+                }
             });
+            
+            // Only return error if we actually found validation issues
+            if (hasValidationErrors || emptyFields.length > 0) {
+                return res.status(400).json({
+                    error: 'Error: one or more fields are missing',
+                    emptyFields,
+                });
+            }
         }
     } else if (workoutType === 'cardio') {
         if (!cardio) emptyFields.push('cardio');
@@ -53,21 +82,24 @@ const createWorkout = async (req, res) => {
             if (!cardio.distance || cardio.distance <= 0) emptyFields.push('cardio.distance');
             if (!cardio.distanceUnit) emptyFields.push('cardio.distanceUnit');
         }
+        
+        // Return error for cardio validation failures
+        if (emptyFields.length > 0) {
+            return res.status(400).json({
+                error: 'Error: one or more fields are missing',
+                emptyFields,
+            });
+        }
     }
 
-    if (emptyFields.length > 0) {
-        return res.status(400).json({
-            error: 'Error: one or more fields are missing',
-            emptyFields,
-        });
-    }
-
+   
     // Create workout with appropriate structure based on type
     try {
         const workoutData = { 
             title, 
             category,
-            workoutType
+            workoutType,
+            isBodyweight: isBodyweight || false  // Default to false if not provided
         };
 
         // Add type-specific data
@@ -114,7 +146,7 @@ const updateWorkout = async (req, res) => {
         return res.status(404).json({ error: 'No such workout' });
     }
 
-    const { title, category, workoutType, sets, cardio, createdAt } = req.body;
+    const { title, category, workoutType, sets, cardio, createdAt, isBodyweight } = req.body;
 
     let emptyFields = [];
     
@@ -122,6 +154,26 @@ const updateWorkout = async (req, res) => {
     if (workoutType === 'weights') {
         if (!sets || sets.length === 0) {
             emptyFields.push('sets');
+        } else {
+            // Validate each set for weights workout
+            sets.forEach((set, index) => {
+                // Always validate reps
+                if (!set.reps || set.reps <= 0) emptyFields.push(`sets[${index}].reps`);
+                
+                // Weight validation - separate logic for bodyweight vs weighted exercises
+                if (isBodyweight) {
+                    // For bodyweight exercises: weight must be present and >= 0
+                    if (set.weight === undefined || set.weight === null || set.weight < 0) {
+                        emptyFields.push(`sets[${index}].weight`);
+                    }
+                    // Note: 0 is allowed for bodyweight exercises
+                } else {
+                    // For weighted exercises: weight must be present and > 0
+                    if (set.weight === undefined || set.weight === null || set.weight <= 0) {
+                        emptyFields.push(`sets[${index}].weight`);
+                    }
+                }
+            });
         }
     } else if (workoutType === 'cardio') {
         if (!cardio) {
@@ -141,7 +193,8 @@ const updateWorkout = async (req, res) => {
         const workoutData = { 
             title, 
             category,
-            workoutType
+            workoutType,
+            isBodyweight: isBodyweight || false  // Default to false if not provided
         };
 
         // Add type-specific data

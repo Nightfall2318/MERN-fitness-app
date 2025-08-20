@@ -100,7 +100,7 @@ const initializeDefaultExercises = async (req, res) => {
   const DEFAULT_WORKOUT_EXERCISES = {
     // Weights exercises
     Legs: [
-      { name: 'Calf Raises', isBodyweight: false },
+      { name: 'Calf Raises', isBodyweight: true },
       { name: 'Deadlifts', isBodyweight: false },
       { name: 'Hack Squats', isBodyweight: false },
       { name: 'Leg Curls', isBodyweight: false },
@@ -220,7 +220,7 @@ const initializeDefaultExercises = async (req, res) => {
           updateOne: {
             filter: { name: exercise.name, category },
             update: { 
-              $setOnInsert: { 
+              $set: { 
                 name: exercise.name, 
                 category, 
                 isBodyweight: exercise.isBodyweight,

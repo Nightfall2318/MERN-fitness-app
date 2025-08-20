@@ -11,7 +11,11 @@ const exerciseSchema = new Schema({
   category: {
     type: String,
     required: true,
-    enum: ['Legs', 'Chest', 'Back', 'Shoulders', 'Arms', 'Core']
+    enum: ['Legs', 'Chest', 'Back', 'Shoulders', 'Arms', 'Core', 'Running', 'Cycling', 'Swimming', 'Rowing', 'Elliptical']
+  },
+  isBodyweight: {
+    type: Boolean,
+    default: false
   },
   isDefault: {
     type: Boolean,
